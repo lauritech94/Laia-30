@@ -21,18 +21,15 @@ body{
 
 .card{
     width:100%;
-    max-width:450px;
-    text-align:center;
+    max-width:500px;
     padding:20px;
-}
-
-.imagen{
-    position:relative;
+    text-align:center;
 }
 
 img{
     width:100%;
     border-radius:20px;
+    cursor:pointer;
 }
 
 #mensaje{
@@ -57,17 +54,15 @@ img{
 
 <div class="card">
 
-<h1>🔍 Recuerdo alterado</h1>
+<h1>🍌 Recuerdo alterado</h1>
 
 <p>
-Encuentra el pingüino oculto.
+Alguien ha escondido algo que no pertenece a este recuerdo.
+
+Encuentra la banana.
 </p>
 
-<div class="imagen">
-
 foto.jpg
-
-</div>
 
 <div id="mensaje"></div>
 
@@ -77,9 +72,8 @@ foto.jpg
 
 const foto =
 document.getElementById("foto");
-foto.addEventListener(
-"click",
-function(e){
+
+foto.addEventListener("click", function(e){
 
     const rect =
         foto.getBoundingClientRect();
@@ -94,23 +88,21 @@ function(e){
         /
         rect.height;
 
-    console.log(
-      "X:",
-      x.toFixed(2),
-      "Y:",
-      y.toFixed(2)
-    );
+    // BANANA
 
-});
+    const objetivoX = 0.73;
+    const objetivoY = 0.81;
+
+    const radio = 0.12;
 
     const distancia =
         Math.sqrt(
-            Math.pow(x-objetivoX,2)
+            Math.pow(x - objetivoX, 2)
             +
-            Math.pow(y-objetivoY,2)
+            Math.pow(y - objetivoY, 2)
         );
 
-    if(distancia < 0.08){
+    if(distancia < radio){
 
         document
         .getElementById("mensaje")
@@ -118,6 +110,8 @@ function(e){
         `
         <span class="correcto">
         ✨ RECUERDO RECUPERADO ✨
+        <br><br>
+        Algunas pistas aparecen donde menos las esperas.
         </span>
         `;
 
@@ -128,7 +122,7 @@ function(e){
         .innerHTML =
         `
         <span class="incorrecto">
-        Sigue buscando...
+        ❌ Sigue buscando...
         </span>
         `;
 
