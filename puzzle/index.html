@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Puzzle Recuerdo</title>
+
+<style>
+
+body{
+    margin:0;
+    padding:20px;
+    min-height:100vh;
+    background:#101827;
+    font-family:Arial,sans-serif;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:white;
+}
+
+.contenedor{
+    width:100%;
+    max-width:450px;
+    text-align:center;
+}
+
+h1{
+    margin-bottom:10px;
+}
+
+p{
+    margin-bottom:25px;
+}
+
+#puzzle{
+    width:320px;
+    height:320px;
+    margin:auto;
+
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:1fr 1fr;
+
+    gap:4px;
+}
+
+.pieza{
+    border:none;
+    cursor:pointer;
+    background-image:url("foto.jpg");
+    background-size:200% 200%;
+    min-height:150px;
+}
+
+#mensaje{
+    margin-top:25px;
+    font-size:22px;
+    font-weight:bold;
+}
+
+.correcto{
+    color:#92ff8d;
+}
+
+</style>
+</head>
+<body>
+
+<div class="contenedor">
+
+    <h1>🧠 Recuerdo perdido</h1>
+
+    <p>
+        Reconstruye la fotografía.<br>
+        Toca dos piezas para intercambiarlas.
+    </p>
+
+    <div id="puzzle"></div>
+
+    <div id="mensaje"></div>
+
+</div>
+
+<script>
+
+let ordenCorrecto = [0,1,2,3];
+
+let piezas = [2,0,3,1];
+
+let seleccionada = null;
+
+const puzzle = document.getElementById("puzzle");
+
+function dibujar(){
+
+    puzzle.innerHTML = "";
+
+    piezas.forEach((valor,index)=>{
+
+        const btn = document.createElement("button");
+
+        btn.className = "pieza";
+
+        btn.dataset.index = index;
+
+        const posiciones = [
+            "0% 0%",
+            "100% 0%",
+            "0% 100%",
+            "100% 100%"
+        ];
+
+        btn.style.backgroundPosition =
+            posiciones[valor];
+
+        btn.onclick = () => seleccionar(index);
+
+        puzzle.appendChild(btn);
+
+    });
+
+    comprobar();
+
+}
+
+function seleccionar(indice){
+
+    if(seleccionada === null){
+
+        seleccionada = indice;
+        return;
+
+    }
+
+    [piezas[seleccionada], piezas[indice]] =
+    [piezas[indice], piezas[seleccionada]];
+
+    seleccionada = null;
+
+    dibujar();
+
+}
+
+function comprobar(){
+
+    const correcto =
+        JSON.stringify(piezas)
+        ===
+        JSON.stringify(ordenCorrecto);
+
+    if(correcto){
+
+        document.getElementById("mensaje").innerHTML =
+        `
+        <div class="correcto">
+            ✨ RECUERDO RECUPERADO ✨
+            <br><br>
+            La fotografía vuelve a estar completa.
+        </div>
+        `;
+
+    }
+
+}
+
+dibujar();
+
+</script>
+
+</body>
+</html>
