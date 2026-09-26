@@ -13,7 +13,20 @@ const total=N*N, correcto=Array.from({length:total},(_,i)=>i);
 let piezas=[...correcto], seleccionada=null;
 const puzzle=document.getElementById('puzzle');puzzle.style.setProperty('--n',N);
 function mezclar(){do{for(let i=piezas.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[piezas[i],piezas[j]]=[piezas[j],piezas[i]]}}while(piezas.every((v,i)=>v===i))}
-function dibujar(){puzzle.innerHTML='';piezas.forEach((valor,indice)=>{const b=document.createElement('button');b.className='pieza'+(seleccionada===indice?' sel':'');const col=valor%N,row=Math.floor(valor/N);b.style.backgroundSize=`${N*100}% ${N*100}%`;b.style.backgroundPosition=`${(col/(N-1))*100}% ${(row/(N-1))*100}%`;b.setAttribute('aria-label',`Pieza ${indice+1}`);b.onclick=()=>seleccionar(indice);puzzle.appendChild(b)});if(piezas.every((v,i)=>v===i))document.getElementById('mensaje').style.display='block'}
+function dibujar(){puzzle.innerHTML='';piezas.forEach((valor,indice)=>{const b=document.createElement('button');b.className='pieza'+(seleccionada===indice?' sel':'');const col=valor%N,row=Math.floor(valor/N);
+                                                                      b.style.backgroundSize =
+`${N*100}% ${N*100}%`;
+
+const xPos = (col * 100) / (N - 1);
+const yPos = (row * 100) / (N - 1);
+
+b.style.backgroundPosition =
+`${xPos}% ${yPos}%`;
+
+b.style.imageRendering = "auto";
+                                                                       
+                                                                       b.setAttribute('aria-label',`Pieza ${indice+1}`);
+                                                                       b.onclick=()=>seleccionar(indice);puzzle.appendChild(b)});if(piezas.every((v,i)=>v===i))document.getElementById('mensaje').style.display='block'}
 function seleccionar(i){if(seleccionada===null){seleccionada=i;dibujar();return}if(seleccionada===i){seleccionada=null;dibujar();return}[piezas[seleccionada],piezas[i]]=[piezas[i],piezas[seleccionada]];seleccionada=null;dibujar()}
 mezclar();dibujar();
 </script></body></html>
