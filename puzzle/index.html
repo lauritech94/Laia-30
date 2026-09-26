@@ -50,8 +50,11 @@ p{
 .pieza{
     border:none;
     cursor:pointer;
+
     background-image:url("foto.jpg");
-    background-size:200% 200%;
+    background-size:320px 320px;
+    background-repeat:no-repeat;
+
     min-height:150px;
 }
 
@@ -107,11 +110,11 @@ function dibujar(){
         btn.dataset.index = index;
 
         const posiciones = [
-            "0% 0%",
-            "100% 0%",
-            "0% 100%",
-            "100% 100%"
-        ];
+    "0% 0%",
+    "100% 0%",
+    "0% 100%",
+    "100% 100%"
+];
 
         btn.style.backgroundPosition =
             posiciones[valor];
