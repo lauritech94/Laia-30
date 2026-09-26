@@ -62,7 +62,10 @@ Alguien ha escondido algo que no pertenece a este recuerdo.
 Encuentra la banana.
 </p>
 
-<img id="foto" src="foto.jpg" alt=">
+<img
+id="foto"
+src="foto.jpg"
+alt="Objeto oculto">
 
 <div id="mensaje"></div>
 
@@ -74,7 +77,7 @@ const foto =
 document.getElementById("foto");
 
 foto.addEventListener("click", function(e){
-
+alert("click");
     const rect =
         foto.getBoundingClientRect();
 
