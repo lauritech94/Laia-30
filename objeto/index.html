@@ -77,7 +77,6 @@ foto.jpg
 
 const foto =
 document.getElementById("foto");
-
 foto.addEventListener(
 "click",
 function(e){
@@ -95,10 +94,14 @@ function(e){
         /
         rect.height;
 
-    // CAMBIA ESTAS COORDENADAS
+    console.log(
+      "X:",
+      x.toFixed(2),
+      "Y:",
+      y.toFixed(2)
+    );
 
-    const objetivoX = 0.82;
-    const objetivoY = 0.25;
+});
 
     const distancia =
         Math.sqrt(
