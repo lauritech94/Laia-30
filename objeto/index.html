@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Objeto oculto</title>
+
+<style>
+
+body{
+    margin:0;
+    background:#111827;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:Arial,sans-serif;
+    color:white;
+}
+
+.card{
+    width:100%;
+    max-width:450px;
+    text-align:center;
+    padding:20px;
+}
+
+.imagen{
+    position:relative;
+}
+
+img{
+    width:100%;
+    border-radius:20px;
+}
+
+#mensaje{
+    margin-top:20px;
+    font-size:22px;
+    font-weight:bold;
+}
+
+.correcto{
+    color:#8dff8d;
+}
+
+.incorrecto{
+    color:#ffb3b3;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h1>🔍 Recuerdo alterado</h1>
+
+<p>
+Encuentra el pingüino oculto.
+</p>
+
+<div class="imagen">
+
+foto.jpg
+
+</div>
+
+<div id="mensaje"></div>
+
+</div>
+
+<script>
+
+const foto =
+document.getElementById("foto");
+
+foto.addEventListener(
+"click",
+function(e){
+
+    const rect =
+        foto.getBoundingClientRect();
+
+    const x =
+        (e.clientX - rect.left)
+        /
+        rect.width;
+
+    const y =
+        (e.clientY - rect.top)
+        /
+        rect.height;
+
+    // CAMBIA ESTAS COORDENADAS
+
+    const objetivoX = 0.82;
+    const objetivoY = 0.25;
+
+    const distancia =
+        Math.sqrt(
+            Math.pow(x-objetivoX,2)
+            +
+            Math.pow(y-objetivoY,2)
+        );
+
+    if(distancia < 0.08){
+
+        document
+        .getElementById("mensaje")
+        .innerHTML =
+        `
+        <span class="correcto">
+        ✨ RECUERDO RECUPERADO ✨
+        </span>
+        `;
+
+    }else{
+
+        document
+        .getElementById("mensaje")
+        .innerHTML =
+        `
+        <span class="incorrecto">
+        Sigue buscando...
+        </span>
+        `;
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
