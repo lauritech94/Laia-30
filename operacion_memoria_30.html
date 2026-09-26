@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operación Memoria 30</title>
+<style>
+:root{
+  --color:#ffd84d;--color2:#ff9f43;--dark:#25263a;--soft:#fff7d6;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;padding:20px;font-family:Arial,sans-serif;color:var(--dark);
+  display:flex;justify-content:center;align-items:center;
+  background:radial-gradient(circle at 15% 15%,rgba(255,255,255,.75),transparent 25%),linear-gradient(135deg,var(--soft),#eee9ff);
+}
+.fondo-bolas{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:-1}
+.bola{position:absolute;border-radius:50%;filter:blur(1px);opacity:.23;box-shadow:inset -8px -10px 15px rgba(0,0,0,.12),inset 7px 7px 12px rgba(255,255,255,.55)}
+.b1{width:130px;height:130px;background:#ffd93d;top:5%;left:-30px}.b2{width:90px;height:90px;background:#6bcB77;bottom:8%;right:3%}.b3{width:70px;height:70px;background:#4d96ff;top:18%;right:8%}.b4{width:110px;height:110px;background:#ff6b6b;bottom:-20px;left:12%}
+.tarjeta{width:100%;max-width:480px;background:rgba(255,255,255,.96);border-radius:28px;padding:28px 24px;box-shadow:0 18px 50px rgba(37,38,58,.18);border:1px solid rgba(255,255,255,.8);text-align:center}
+.cabecera{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:18px}
+.mundo{font-size:12px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--color2);text-align:left}
+.contador{background:var(--soft);padding:7px 11px;border-radius:999px;font-weight:800;font-size:13px;white-space:nowrap}
+.icono{font-size:48px;line-height:1;margin:4px 0 10px;filter:drop-shadow(0 5px 5px rgba(0,0,0,.15))}
+h1{font-size:27px;margin:0 0 9px}.subtitulo{margin:0 0 20px;color:#707184;font-size:15px}
+.imagen-prueba{width:100%;max-height:220px;object-fit:cover;border-radius:16px;margin:0 0 16px;display:none;border:3px solid var(--soft)}
+.pista{padding:20px;background:linear-gradient(135deg,var(--soft),#fff);border-left:5px solid var(--color);border-radius:16px;text-align:left;font-size:18px;line-height:1.55;white-space:pre-line;margin-bottom:18px}
+.especial{font-size:24px;font-weight:900;letter-spacing:3px;text-align:center;color:var(--dark);margin:14px 0}
+input{width:100%;padding:15px;border:2px solid #dedee8;border-radius:13px;font-size:19px;text-align:center;outline:none;margin-bottom:12px}input:focus{border-color:var(--color2);box-shadow:0 0 0 4px color-mix(in srgb,var(--color) 23%,transparent)}
+.botones{display:grid;grid-template-columns:1fr auto;gap:10px}button{border:0;border-radius:13px;padding:15px 18px;font-weight:800;font-size:16px;cursor:pointer}.comprobar{background:var(--dark);color:white}.ayuda{background:var(--soft);color:var(--dark)}
+button:hover{transform:translateY(-1px)}.resultado{display:none;margin-top:18px;padding:18px;border-radius:15px;line-height:1.5}.correcto{display:block;background:#def7e4;color:#155d2b}.incorrecto{display:block;background:#ffe0e0;color:#822}.final{display:block;background:#fff0ad;color:#5c4700}.numero-siguiente{font-size:31px;font-weight:900;letter-spacing:2px}.mini{font-size:13px;color:#777;margin-top:15px}.progreso{height:7px;background:#ececf2;border-radius:20px;overflow:hidden;margin-top:18px}.barra{height:100%;width:0;background:linear-gradient(90deg,var(--color),var(--color2));transition:.4s}
+@media(max-width:420px){body{padding:12px}.tarjeta{padding:24px 18px}.pista{font-size:17px}.botones{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="fondo-bolas"><span class="bola b1"></span><span class="bola b2"></span><span class="bola b3"></span><span class="bola b4"></span></div>
+<main class="tarjeta">
+  <div class="cabecera"><div class="mundo" id="mundo">CUARTEL GENERAL</div><div class="contador" id="contador">RECUERDO 01/30</div></div>
+  <div class="icono" id="icono">🧠</div>
+  <h1 id="titulo">Operación Memoria 30</h1>
+  <p class="subtitulo" id="subtitulo">Recupera los recuerdos perdidos</p>
+  <img class="imagen-prueba" id="imagen" alt="Imagen de la prueba">
+  <section class="pista" id="texto">Cargando prueba...</section>
+  <div class="especial" id="especial" style="display:none"></div>
+  <input id="respuesta" type="text" placeholder="Escribe tu respuesta" autocomplete="off">
+  <div class="botones"><button class="comprobar" onclick="comprobarRespuesta()">COMPROBAR</button><button class="ayuda" onclick="mostrarPista()">💡 PISTA</button></div>
+  <div class="resultado" id="resultado"></div>
+  <div class="progreso"><div class="barra" id="barra"></div></div>
+  <div class="mini">Accede a una prueba con <strong>?tarjeta=01</strong>, <strong>?tarjeta=02</strong>...</div>
+</main>
+<script>
+const tarjetas={
+"01":{m:"MINIONS · DIVERSIÓN",i:"🍌",t:"Reparto de bananas",x:"Los Minions han encontrado tu primer recuerdo. Han repartido 30 bananas entre 3 Minions, dando la misma cantidad a cada uno.\n\n¿Cuántas recibe cada Minion?",r:["10","diez"],p:"Repartir en partes iguales significa dividir.",s:"Busca el sobre número 10."},
+"02":{m:"MINIONS · DIVERSIÓN",i:"🟡",t:"El mensaje al revés",x:"Han escrito su comida favorita al revés. Descifra la palabra:",e:"ANANAB",r:["banana"],p:"Empieza por la última letra.",s:"Busca una banana. Allí espera el recuerdo 2."},
+"03":{m:"MINIONS · DIVERSIÓN",i:"👁️",t:"El Minion diferente",x:"Observa la lámina impresa. Uno no es como los demás. No mires su ropa, mira cómo observa el mundo.\n\nEscribe la letra del intruso.",r:["c"],p:"Fíjate en el número de ojos.",s:"Busca el sobre C."},
+"04":{m:"MINIONS · DIVERSIÓN",i:"🍓",t:"Solo importa una fruta",x:"En la lámina hay muchas frutas mezcladas. Cuenta únicamente la fruta favorita de los Minions.",r:["9","nueve"],p:"Su fruta favorita empieza por B.",s:"Busca el sobre número 9."},
+"05":{m:"MINIONS · DIVERSIÓN",i:"🔤",t:"La contraseña amarilla",x:"Cada palabra vale el número de letras que contiene.\n\nAMARILLO = 8\nMINION = 6\nBANANA = 6\n\n¿Cuánto vale GRU?",r:["3","tres"],p:"No sumes ni multipliques. Solo cuenta.",s:"Busca el sobre número 3."},
+"06":{m:"MINIONS · ESFERA ESENCIAL",i:"✨",t:"La cámara de bananas",x:"Usa la tabla impresa y sustituye cada palabra por su cifra. Respeta este orden:",e:"BELLO · BANANA · GRU · POOPAYE",r:["7452"],p:"Busca cada palabra en la tabla y une las cuatro cifras.",s:"¡Has recuperado la esfera de la DIVERSIÓN! Guarda su palabra secreta: MIRA. Busca la tarjeta 07."},
+"07":{m:"MONSTRUOS S.A. · VALENTÍA",i:"🚪",t:"La puerta de Boo",x:"Boo está tras una puerta. No es roja, su número es par, es mayor que 4 y menor que 8.\n\n¿Qué número tiene?",r:["6","seis"],p:"Solo hay un número par entre 4 y 8.",s:"Mira detrás de la puerta 6."},
+"08":{m:"MONSTRUOS S.A. · VALENTÍA",i:"⚡",t:"Energía emocional",x:"Un susto produce 3 unidades y una risa produce 5. Sulley consigue 2 sustos y Mike 2 risas.\n\n¿Cuántas unidades consiguen entre los dos?",r:["16","dieciseis","dieciséis"],p:"Calcula 2 × 3 y 2 × 5; después suma.",s:"Busca el sobre número 16."},
+"09":{m:"MONSTRUOS S.A. · VALENTÍA",i:"👀",t:"Código de ojos",x:"Observa las cuatro tarjetas impresas. No cuentes monstruos. Cuenta aquello con lo que pueden verte.",r:["6","seis"],p:"Cuenta todos los ojos dibujados.",s:"Busca el escondite número 6 de este mundo."},
+"10":{m:"MONSTRUOS S.A. · VALENTÍA",i:"📁",t:"El expediente de Roz",x:"Completa la secuencia:",e:"1 · 2 · 4 · 8 · 16 · ?",r:["32","treinta y dos"],p:"Cada número es el doble del anterior.",s:"Busca la página 32 del libro preparado."},
+"11":{m:"MONSTRUOS S.A. · VALENTÍA",i:"🚪",t:"Puertas desordenadas",x:"Ordena las puertas impresas desde la más pequeña hasta la más grande y lee las letras ocultas.\n\n¿Qué palabra forman?",r:["mesa"],p:"No las ordenes por color. Solo por altura.",s:"Busca debajo de la mesa."},
+"12":{m:"MONSTRUOS S.A. · ESFERA ESENCIAL",i:"🔮",t:"La puerta maestra",x:"Elige entre 18, 23, 30 y 42. La puerta correcta es par, divisible entre 3 y coincide con la edad que acabas de estrenar.",r:["30","treinta"],p:"Esta aventura existe por un número muy concreto.",s:"¡Has recuperado la esfera de la VALENTÍA! Guarda su palabra: DONDE. Busca la tarjeta 13."},
+"13":{m:"BICHOS · SUPERACIÓN",i:"🕷️",t:"El infiltrado",x:"En la lámina hay una hormiga, una mariposa, un saltamontes, una mariquita y una araña. Uno no es un insecto.\n\nEscribe cuál.",r:["araña","arana"],p:"Los insectos tienen seis patas.",s:"Mira la letra de la araña y busca ese sobre."},
+"14":{m:"BICHOS · SUPERACIÓN",i:"🐜",t:"Las patas de la colonia",x:"Tres hormigas salen a buscar comida. Si cada una tiene seis patas, ¿cuántas patas hay en total?",r:["18","dieciocho"],p:"Multiplica hormigas por patas.",s:"Busca el sobre número 18."},
+"15":{m:"BICHOS · SUPERACIÓN",i:"🌿",t:"El camino de Flik",x:"Resuelve el laberinto impreso y anota, en orden, las letras del camino correcto.\n\n¿Qué palabra forman?",r:["planta"],p:"Lee las letras según avanzas por el camino.",s:"Busca detrás o debajo de una planta."},
+"16":{m:"BICHOS · SUPERACIÓN",i:"🍃",t:"La secuencia de la cosecha",x:"Completa la secuencia:",e:"🍃 · 🐜 · 🍃 · 🐜 · 🍃 · ?",r:["hormiga","🐜"],p:"Los dos elementos se alternan.",s:"Busca una imagen de una hormiga."},
+"17":{m:"BICHOS · SUPERACIÓN",i:"🧩",t:"El mensaje de la colonia",x:"Ordena los fragmentos impresos hasta crear una instrucción con sentido:\n\nTA · ES · BA · JO · LA · SILLA",r:["esta bajo la silla","está bajo la silla"],p:"La frase comienza con ESTÁ.",s:"Haz exactamente lo que dice la frase."},
+"18":{m:"BICHOS · ESFERA ESENCIAL",i:"🦗",t:"El mecanismo de Hopper",x:"Sustituye las palabras usando la tarjeta impresa y resuelve:",e:"PATAS − ANTENAS + ALAS",r:["8","ocho"],p:"6 − 2 + 4.",s:"¡Has recuperado la esfera de la SUPERACIÓN! Guarda su palabra: GUARDAS. Busca la tarjeta 19."},
+"19":{m:"LUCA · AVENTURA",i:"🛵",t:"El sueño de Luca",x:"Mira las cuatro imágenes impresas. No elijas lo que Luca necesita, sino aquello con lo que sueña.\n\n¿Qué es?",r:["vespa","moto","motocicleta"],p:"Tiene dos ruedas, pero no es una bicicleta.",s:"Mira detrás de la Vespa."},
+"20":{m:"LUCA · AVENTURA",i:"🏁",t:"La carrera de Portorosso",x:"Debes completar 4 largos nadando, 3 platos de pasta y 2 recorridos en bicicleta.\n\n¿Cuántas acciones hay en total?",r:["9","nueve"],p:"Suma las tres cantidades.",s:"Busca el sobre número 9."},
+"21":{m:"LUCA · AVENTURA",i:"🌊",t:"El secreto marino",x:"En tierra parece humano, pero cuando entra en contacto conmigo aparece su verdadera forma. Puedes beberme.\n\n¿Qué soy?",r:["agua","el agua"],p:"Luca intenta no tocarla cuando está en tierra.",s:"Busca cerca de una botella, jarra o fregadero."},
+"22":{m:"LUCA · AVENTURA",i:"🔵",t:"El mensaje bajo el mar",x:"Usa el filtro azul sobre la lámina impresa y descubre la palabra escondida.",r:["ventana"],p:"Mira únicamente las letras que destacan con el filtro.",s:"Busca cerca de una ventana."},
+"23":{m:"LUCA · AVENTURA",i:"🔡",t:"Código Vespa",x:"Según la tabla impresa, calcula la posición de la primera letra de VESPA más la posición de la última.",r:["23","veintitres","veintitrés"],p:"V = 22 y A = 1.",s:"Busca el sobre número 23."},
+"24":{m:"LUCA · ESFERA ESENCIAL",i:"🤫",t:"Silenzio, Bruno",x:"Ignora todos los números que estén acompañados por BRUNO. ¿Cuál queda?",e:"BRUNO 2  |  7  |  BRUNO 9  |  BRUNO 4",r:["7","siete"],p:"Tacha cada bloque que contenga BRUNO.",s:"¡Has recuperado la esfera de la AVENTURA! Guarda su palabra: TUS. Busca la tarjeta 25."},
+"25":{m:"TOY STORY · AMISTAD",i:"🤠",t:"Las palabras perdidas",x:"Ordena estas palabras para formar una frase conocida:",e:"MÍ · HAY · EN · AMIGO · UN",r:["hay un amigo en mi","hay un amigo en mí"],p:"La frase comienza por HAY.",s:"Busca una fotografía en la que aparezcan amigos."},
+"26":{m:"TOY STORY · AMISTAD",i:"🚀",t:"Hasta el infinito",x:"Buzz quiere seguir avanzando. Completa la secuencia:",e:"2 · 4 · 8 · 16 · ?",r:["32","treinta y dos"],p:"Cada número es el doble del anterior.",s:"Busca el escondite número 32."},
+"27":{m:"TOY STORY · AMISTAD",i:"⭐",t:"¿Quién soy?",x:"Tengo sombrero, pero no soy un vaquero real. Tengo una placa, pero no soy policía. Mi mejor amigo cree que puede volar.\n\n¿Quién soy?",r:["woody"],p:"Es uno de los juguetes favoritos de Andy.",s:"Busca algo relacionado con Woody o un sombrero."},
+"28":{m:"TOY STORY · AMISTAD",i:"🔢",t:"El código de Andy",x:"Ordena WOODY, BUZZ, REX y HAMM de menor a mayor según sus letras. Si hay empate, usa el orden alfabético. Gira las tarjetas y escribe el código.",r:["3445"],p:"El orden es REX, BUZZ, HAMM y WOODY.",s:"Busca la caja o el sobre 3445."},
+"29":{m:"TOY STORY · AMISTAD",i:"🧸",t:"El juguete que falta",x:"Encaja las piezas impresas en la silueta vacía. ¿Qué personaje completa exactamente la estantería?",r:["buzz","buzz lightyear"],p:"No importa tu favorito, solo la forma del hueco.",s:"Gira la pieza de Buzz y sigue la instrucción."},
+"30":{m:"CUARTEL GENERAL · RECUERDO FINAL",i:"🧠",t:"El primer recuerdo",x:"Has llegado hasta el último recuerdo. Busca la fotografía más antigua encontrada durante la aventura.\n\n¿Qué frase aparece en su reverso?",r:["30 años 5 mundos 1 historia","30 anos 5 mundos 1 historia"],p:"Las fotografías tienen dos caras.",s:"Has recuperado los 30 recuerdos. Ordena las cinco esferas esenciales y lee: MIRA DONDE GUARDAS TUS RECUERDOS.",fin:true}
+};
+const temas={"MINIONS":["#ffd93d","#ff9f43","#fff7c2"],"MONSTRUOS":["#9b6dff","#44c7b6","#eee7ff"],"BICHOS":["#6bcB77","#2f9e44","#e7f8e9"],"LUCA":["#4d96ff","#00a8cc","#e2f4ff"],"TOY STORY":["#ff6b6b","#f7b731","#fff0e8"],"CUARTEL":["#ffd93d","#9b6dff","#fff7d6"]};
+const params=new URLSearchParams(location.search);const id=(params.get("tarjeta")||"01").padStart(2,"0");const a=tarjetas[id];
+function normalizar(v){return v.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[¡!¿?.,;:]/g,"").replace(/\s+/g," ")}
+if(a){
+ const key=Object.keys(temas).find(k=>a.m.includes(k))||"CUARTEL";const c=temas[key];document.documentElement.style.setProperty("--color",c[0]);document.documentElement.style.setProperty("--color2",c[1]);document.documentElement.style.setProperty("--soft",c[2]);
+ mundo.textContent=a.m;contador.textContent=`RECUERDO ${id}/30`;icono.textContent=a.i;titulo.textContent=a.t;texto.textContent=a.x;barra.style.width=`${Number(id)/30*100}%`;
+ if(a.e){especial.textContent=a.e;especial.style.display="block"}
+ // Para añadir una foto: guarda, por ejemplo, images/01.jpg y descomenta las dos líneas siguientes.
+ // imagen.src=`images/${id}.jpg`; imagen.style.display="block";
+}else{titulo.textContent="Prueba no encontrada";texto.textContent="Usa un número entre 01 y 30 en la dirección, por ejemplo: ?tarjeta=01";respuesta.style.display="none"}
+function mostrarPista(){if(!a)return;resultado.className="resultado final";resultado.innerHTML=`💡 <strong>Pista:</strong><br>${a.p}`}
+function comprobarRespuesta(){if(!a)return;const v=normalizar(respuesta.value);if(!v){alert("Escribe una respuesta.");return}const ok=a.r.some(x=>normalizar(x)===v);if(ok){resultado.className=a.fin?"resultado final":"resultado correcto";resultado.innerHTML=a.fin?`🎉 <strong>¡MISIÓN COMPLETADA!</strong><br><br>${a.s}<br><br>El recuerdo número 31 empieza ahora. ❤️`:`✅ <strong>¡Recuerdo recuperado!</strong><br><br>${a.s}`;}else{resultado.className="resultado incorrecto";resultado.innerHTML="❌ <strong>Todavía no.</strong><br>Revísalo o utiliza la pista."}}
+respuesta.addEventListener("keydown",e=>{if(e.key==="Enter")comprobarRespuesta()});
+</script>
+</body>
+</html>
