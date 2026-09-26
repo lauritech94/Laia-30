@@ -1,177 +1,19 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Puzzle Recuerdo</title>
-
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Puzzle de recuerdo</title>
 <style>
-
-body{
-    margin:0;
-    padding:20px;
-    min-height:100vh;
-    background:#101827;
-    font-family:Arial,sans-serif;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    color:white;
-}
-
-.contenedor{
-    width:100%;
-    max-width:450px;
-    text-align:center;
-}
-
-h1{
-    margin-bottom:10px;
-}
-
-p{
-    margin-bottom:25px;
-}
-
-#puzzle{
-    width:320px;
-    height:320px;
-    margin:auto;
-
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    grid-template-rows:1fr 1fr;
-
-    gap:4px;
-}
-
-.pieza{
-    border:none;
-    cursor:pointer;
-
-    background-image:url("foto.jpg");
-    background-size:320px 320px;
-    background-repeat:no-repeat;
-
-    min-height:150px;
-}
-
-#mensaje{
-    margin-top:25px;
-    font-size:22px;
-    font-weight:bold;
-}
-
-.correcto{
-    color:#92ff8d;
-}
-
-</style>
-</head>
-<body>
-
-<div class="contenedor">
-
-    <h1>🧠 Recuerdo perdido</h1>
-
-    <p>
-        Reconstruye la fotografía.<br>
-        Toca dos piezas para intercambiarlas.
-    </p>
-
-    <div id="puzzle"></div>
-
-    <div id="mensaje"></div>
-
-</div>
-
+*{box-sizing:border-box}body{margin:0;min-height:100vh;padding:18px;background:linear-gradient(145deg,#0d1526,#202b49);font-family:Arial,sans-serif;color:white;display:flex;justify-content:center;align-items:center}.card{width:100%;max-width:430px;text-align:center;background:rgba(255,255,255,.08);padding:22px;border-radius:24px;box-shadow:0 20px 50px #0006}h1{margin:0 0 8px}.sub{margin:0 0 18px;color:#dbe5ff;line-height:1.45}#puzzle{--n:3;width:min(88vw,390px);aspect-ratio:1;margin:auto;display:grid;grid-template-columns:repeat(var(--n),1fr);gap:3px;background:#fff3;border:3px solid #fff5;border-radius:15px;overflow:hidden;touch-action:manipulation}.pieza{border:0;padding:0;background-image:url("foto.jpg");background-repeat:no-repeat;cursor:pointer;position:relative}.pieza.sel{outline:4px solid #ffe66d;outline-offset:-4px;filter:brightness(1.15)}#mensaje{display:none;margin-top:18px;padding:16px;border-radius:14px;background:#dff8e6;color:#195a2c;font-weight:bold}.nota{font-size:12px;color:#b7c2dc;margin-top:14px}
+</style></head>
+<body><main class="card"><h1>🧠 Recuerdo fragmentado</h1><p class="sub">Reconstruye la fotografía.<br>Toca dos piezas para intercambiarlas.</p><div id="puzzle"></div><div id="mensaje">✨ RECUERDO RECUPERADO ✨<br>La fotografía vuelve a estar completa.</div><div class="nota">Prueba preparada para móvil</div></main>
 <script>
-
-let ordenCorrecto = [0,1,2,3,4,5,6,7,8];
-
-let piezas = [2,0,4,1,6,8,3,5,7];
-
-let seleccionada = null;
-
-const puzzle = document.getElementById("puzzle");
-
-function dibujar(){
-
-    puzzle.innerHTML = "";
-
-    piezas.forEach((valor,index)=>{
-
-        const btn = document.createElement("button");
-
-        btn.className = "pieza";
-
-        btn.dataset.index = index;
-
-        const posiciones = [
-    "0% 0%",
-    "100% 0%",
-    "0% 100%",
-    "100% 100%"
-];
-
-        btn.style.backgroundPosition =
-            posiciones[valor];
-
-        btn.onclick = () => seleccionar(index);
-
-        puzzle.appendChild(btn);
-
-    });
-
-    comprobar();
-
-}
-
-function seleccionar(indice){
-
-    if(seleccionada === null){
-
-        seleccionada = indice;
-        return;
-
-    }
-
-    [piezas[seleccionada], piezas[indice]] =
-    [piezas[indice], piezas[seleccionada]];
-
-    seleccionada = null;
-
-    dibujar();
-
-}
-
-function comprobar(){
-
-    const correcto =
-        JSON.stringify(piezas)
-        ===
-        JSON.stringify(ordenCorrecto);
-
-    if(correcto){
-
-        document.getElementById("mensaje").innerHTML =
-        `
-        <div class="correcto">
-            ✨ RECUERDO RECUPERADO ✨
-            <br><br>
-            La fotografía vuelve a estar completa.
-        </div>
-        `;
-
-    }
-
-}
-
-dibujar();
-
-</script>
-
-</body>
-</html>
+const N=3; // Cambia a 4 para probar 4x4
+const total=N*N, correcto=Array.from({length:total},(_,i)=>i);
+let piezas=[...correcto], seleccionada=null;
+const puzzle=document.getElementById('puzzle');puzzle.style.setProperty('--n',N);
+function mezclar(){do{for(let i=piezas.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[piezas[i],piezas[j]]=[piezas[j],piezas[i]]}}while(piezas.every((v,i)=>v===i))}
+function dibujar(){puzzle.innerHTML='';piezas.forEach((valor,indice)=>{const b=document.createElement('button');b.className='pieza'+(seleccionada===indice?' sel':'');const col=valor%N,row=Math.floor(valor/N);b.style.backgroundSize=`${N*100}% ${N*100}%`;b.style.backgroundPosition=`${(col/(N-1))*100}% ${(row/(N-1))*100}%`;b.setAttribute('aria-label',`Pieza ${indice+1}`);b.onclick=()=>seleccionar(indice);puzzle.appendChild(b)});if(piezas.every((v,i)=>v===i))document.getElementById('mensaje').style.display='block'}
+function seleccionar(i){if(seleccionada===null){seleccionada=i;dibujar();return}if(seleccionada===i){seleccionada=null;dibujar();return}[piezas[seleccionada],piezas[i]]=[piezas[i],piezas[seleccionada]];seleccionada=null;dibujar()}
+mezclar();dibujar();
+</script></body></html>
