@@ -42,82 +42,48 @@ body{
   text-align:center;
 }
 h1{font-size:27px;margin:0 0 6px}
-.subtitulo{margin:0 0 16px;color:#707184;font-size:15px}
-#zonaJuego{transition:opacity .6s ease,transform .6s ease}
+.subtitulo{margin:0 0 15px;color:#707184;font-size:15px}
+#zonaJuego{transition:opacity .55s ease,transform .55s ease}
 #lienzo{
   position:relative;
   width:100%;
   aspect-ratio:1;
   overflow:hidden;
   border-radius:18px;
-  background:#f4f0e8;
+  background:#eee8dc;
   border:4px solid #fff1b8;
-  box-shadow:inset 0 0 25px rgba(37,38,58,.12);
+  box-shadow:inset 0 0 28px rgba(37,38,58,.15);
   touch-action:none;
 }
 canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
-#guia{pointer-events:none;opacity:.15}
-#pintura{cursor:crosshair}
+#completo{z-index:1}
+#guia{z-index:2;pointer-events:none}
+#pintura{z-index:3;cursor:crosshair}
 #rodillo{
   position:absolute;
-  width:76px;
-  height:28px;
-  border-radius:8px;
-  background:var(--pintura,#d73c36);
-  border:4px solid rgba(255,255,255,.88);
-  box-shadow:0 7px 16px rgba(0,0,0,.3);
+  width:82px;
+  height:30px;
+  border-radius:9px;
+  background:var(--pintura,#d83b36);
+  border:4px solid rgba(255,255,255,.9);
+  box-shadow:0 8px 17px rgba(0,0,0,.32);
   transform:translate(-50%,-50%) rotate(-8deg);
   pointer-events:none;
   opacity:0;
   z-index:8;
 }
-#rodillo:after{
-  content:"";
-  position:absolute;
-  width:8px;
-  height:42px;
-  right:-13px;
-  top:13px;
-  border-radius:5px;
-  background:#72798a;
-  transform:rotate(-25deg);
-  transform-origin:top;
-}
-#rodillo:before{
-  content:"";
-  position:absolute;
-  width:25px;
-  height:9px;
-  right:-32px;
-  top:46px;
-  border-radius:8px;
-  background:#25263a;
-  transform:rotate(-25deg);
-}
+#rodillo:after{content:"";position:absolute;width:8px;height:43px;right:-14px;top:14px;border-radius:5px;background:#737b8e;transform:rotate(-25deg);transform-origin:top}
+#rodillo:before{content:"";position:absolute;width:27px;height:10px;right:-34px;top:48px;border-radius:8px;background:#25263a;transform:rotate(-25deg)}
 #rodillo.visible{opacity:1}
-.etapa{
-  margin:14px 0 10px;
-  padding:12px 14px;
-  border-radius:14px;
-  background:linear-gradient(135deg,#fff7d6,#fff);
-  font-weight:800;
-}
+.etapa{margin:14px 0 9px;padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,#fff7d6,#fff);font-weight:800}
+.progreso{height:8px;background:#e8e8ef;border-radius:999px;overflow:hidden;margin-top:9px}
+#barra{height:100%;width:0;background:#d83b36;border-radius:999px;transition:width .15s,background .3s}
 .indicador{display:flex;justify-content:center;gap:12px;margin-top:12px}
-.paso{
-  width:35px;height:35px;border-radius:50%;display:grid;place-items:center;
-  border:3px solid #dadce6;background:white;font-weight:900;color:#8b8d99;
-  transition:.3s;
-}
+.paso{width:35px;height:35px;border-radius:50%;display:grid;place-items:center;border:3px solid #dadce6;background:white;font-weight:900;color:#8b8d99;transition:.3s}
 .paso.activo{transform:scale(1.12);border-color:var(--tono);box-shadow:0 0 17px color-mix(in srgb,var(--tono) 55%,transparent);color:var(--tono)}
 .paso.hecho{background:var(--tono);border-color:var(--tono);color:white}
 #desxifrant{display:none;padding:18px;border-radius:15px;background:#fff0ad;color:#5c4700;font-weight:800;animation:pulso .8s ease-in-out infinite alternate}
-#recordFinal{
-  max-height:0;
-  opacity:0;
-  overflow:hidden;
-  transform:translateY(18px) scale(.97);
-  transition:max-height 1.8s ease,opacity 1.8s ease,transform 1.8s ease;
-}
+#recordFinal{max-height:0;opacity:0;overflow:hidden;transform:translateY(18px) scale(.97);transition:max-height 1.8s ease,opacity 1.8s ease,transform 1.8s ease}
 #recordFinal.visible{max-height:1000px;opacity:1;transform:translateY(0) scale(1)}
 #recordFinal img{display:block;width:100%;height:auto;border-radius:18px;border:4px solid var(--soft);box-shadow:0 12px 30px rgba(37,38,58,.18)}
 .record{margin-top:14px;font-size:20px;font-weight:900;color:var(--color2)}
@@ -130,13 +96,18 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
 <main class="tarjeta">
   <div id="zonaJuego">
     <h1>Composició bloquejada</h1>
-    <p class="subtitulo">Aplica les capes de pintura en l'ordre correcte.</p>
+    <p class="subtitulo">Passa el corró per la silueta, capa per capa.</p>
+
     <div id="lienzo">
+      <canvas id="completo"></canvas>
       <canvas id="guia"></canvas>
       <canvas id="pintura"></canvas>
       <div id="rodillo"></div>
     </div>
-    <div id="etapa" class="etapa">1. Pinta la capa vermella</div>
+
+    <div id="etapa" class="etapa">1. Pinta l'escut vermell</div>
+    <div class="progreso"><div id="barra"></div></div>
+
     <div class="indicador">
       <div id="paso0" class="paso activo" style="--tono:#d83b36">1</div>
       <div id="paso1" class="paso" style="--tono:#171820">2</div>
@@ -151,127 +122,228 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
     <div class="record">✨ Record recuperat</div>
   </div>
 </main>
+
 <script>
 const lienzo=document.getElementById('lienzo');
+const completo=document.getElementById('completo');
 const guia=document.getElementById('guia');
 const pintura=document.getElementById('pintura');
+const c=completo.getContext('2d');
 const g=guia.getContext('2d');
 const p=pintura.getContext('2d');
 const rodillo=document.getElementById('rodillo');
 const etapaTexto=document.getElementById('etapa');
+const barra=document.getElementById('barra');
 
-const colores=['#d83b36','#171820','#eef5fa'];
-const nombres=['vermella','negra','blanca'];
-const objetivos=[.72,.63,.50];
+const colores=['#d83b36','#171820','#f5f8fb'];
+const textos=["1. Pinta l'escut vermell","2. Pinta la silueta negra","3. Pinta els detalls blancs"];
+const umbrales=[0.45,0.42,0.34];
 let etapa=0;
 let pintando=false;
 let ultimo=null;
-let cobertura=[new Set(),new Set(),new Set()];
-let ancho=0,alto=0,ratio=1;
+let ancho=0;
+let alto=0;
+let ratio=1;
+let mascara=null;
+let celdasObjetivo=[];
+let celdasPintadas=new Set();
+
+function configurarCanvas(canvas,ctx){
+  canvas.width=Math.round(ancho*ratio);
+  canvas.height=Math.round(alto*ratio);
+  ctx.setTransform(ratio,0,0,ratio,0,0);
+}
 
 function ajustar(){
   const r=lienzo.getBoundingClientRect();
   ratio=window.devicePixelRatio||1;
-  ancho=r.width;alto=r.height;
-  [guia,pintura].forEach(c=>{c.width=Math.round(ancho*ratio);c.height=Math.round(alto*ratio)});
-  g.setTransform(ratio,0,0,ratio,0,0);
-  p.setTransform(ratio,0,0,ratio,0,0);
-  dibujarGuia();
+  ancho=r.width;
+  alto=r.height;
+  configurarCanvas(completo,c);
+  configurarCanvas(guia,g);
+  configurarCanvas(pintura,p);
+  dibujarComposicionBase();
+  prepararEtapa();
 }
 
-function silueta(ctx,capa){
-  const cx=ancho/2,cy=alto*.53;
-  ctx.beginPath();
+function crearRuta(capa){
+  const path=new Path2D();
+  const cx=ancho/2;
+  const cy=alto*.52;
+  const radio=Math.min(ancho,alto)*.40;
+
   if(capa===0){
-    ctx.arc(cx,cy,Math.min(ancho,alto)*.38,0,Math.PI*2);
-  }else if(capa===1){
-    ctx.moveTo(cx,alto*.18);
-    ctx.lineTo(ancho*.68,alto*.36);
-    ctx.lineTo(ancho*.63,alto*.47);
-    ctx.lineTo(ancho*.77,alto*.74);
-    ctx.lineTo(ancho*.60,alto*.69);
-    ctx.lineTo(cx,alto*.84);
-    ctx.lineTo(ancho*.40,alto*.69);
-    ctx.lineTo(ancho*.23,alto*.74);
-    ctx.lineTo(ancho*.37,alto*.47);
-    ctx.lineTo(ancho*.32,alto*.36);
-    ctx.closePath();
-  }else{
-    ctx.moveTo(ancho*.40,alto*.39);
-    ctx.quadraticCurveTo(cx,alto*.31,ancho*.60,alto*.39);
-    ctx.lineTo(ancho*.57,alto*.47);
-    ctx.quadraticCurveTo(cx,alto*.43,ancho*.43,alto*.47);
-    ctx.closePath();
-    ctx.moveTo(ancho*.42,alto*.58);
-    ctx.lineTo(ancho*.48,alto*.55);
-    ctx.lineTo(ancho*.45,alto*.64);
-    ctx.closePath();
-    ctx.moveTo(ancho*.58,alto*.58);
-    ctx.lineTo(ancho*.52,alto*.55);
-    ctx.lineTo(ancho*.55,alto*.64);
-    ctx.closePath();
+    path.arc(cx,cy,radio,0,Math.PI*2);
   }
+
+  if(capa===1){
+    path.moveTo(cx,alto*.18);
+    path.bezierCurveTo(ancho*.42,alto*.20,ancho*.38,alto*.30,ancho*.39,alto*.39);
+    path.lineTo(ancho*.30,alto*.48);
+    path.lineTo(ancho*.25,alto*.78);
+    path.lineTo(ancho*.42,alto*.68);
+    path.lineTo(cx,alto*.86);
+    path.lineTo(ancho*.58,alto*.68);
+    path.lineTo(ancho*.75,alto*.78);
+    path.lineTo(ancho*.70,alto*.48);
+    path.lineTo(ancho*.61,alto*.39);
+    path.bezierCurveTo(ancho*.62,alto*.30,ancho*.58,alto*.20,cx,alto*.18);
+    path.closePath();
+  }
+
+  if(capa===2){
+    path.moveTo(ancho*.40,alto*.38);
+    path.quadraticCurveTo(ancho*.45,alto*.32,ancho*.49,alto*.39);
+    path.quadraticCurveTo(ancho*.45,alto*.47,ancho*.39,alto*.43);
+    path.closePath();
+
+    path.moveTo(ancho*.60,alto*.38);
+    path.quadraticCurveTo(ancho*.55,alto*.32,ancho*.51,alto*.39);
+    path.quadraticCurveTo(ancho*.55,alto*.47,ancho*.61,alto*.43);
+    path.closePath();
+
+    path.moveTo(cx,alto*.50);
+    path.lineTo(ancho*.57,alto*.58);
+    path.lineTo(ancho*.52,alto*.59);
+    path.lineTo(ancho*.57,alto*.70);
+    path.lineTo(ancho*.43,alto*.61);
+    path.lineTo(ancho*.48,alto*.60);
+    path.closePath();
+  }
+
+  return path;
 }
 
-function dibujarGuia(){
+function dibujarComposicionBase(){
+  c.clearRect(0,0,ancho,alto);
+  c.fillStyle='#eee8dc';
+  c.fillRect(0,0,ancho,alto);
+}
+
+function prepararEtapa(){
+  p.clearRect(0,0,ancho,alto);
   g.clearRect(0,0,ancho,alto);
+  mascara=crearRuta(etapa);
+  celdasPintadas=new Set();
+  celdasObjetivo=[];
+
   g.save();
-  g.strokeStyle='#25263a';g.lineWidth=3;g.setLineDash([8,8]);
-  silueta(g,etapa);g.stroke();
+  g.fillStyle=etapa===2?'rgba(65,78,92,.15)':'rgba(37,38,58,.10)';
+  g.strokeStyle=colores[etapa];
+  g.lineWidth=4;
+  g.setLineDash([9,7]);
+  g.fill(mascara);
+  g.stroke(mascara);
   g.restore();
-}
 
-function dentroMascara(x,y,capa){
-  p.save();
-  silueta(p,capa);
-  const ok=p.isPointInPath(x*ratio,y*ratio);
-  p.restore();
-  return ok;
-}
-
-function pintarLinea(x1,y1,x2,y2){
-  p.save();
-  p.beginPath();
-  silueta(p,etapa);
-  p.clip();
-  p.strokeStyle=colores[etapa];
-  p.lineWidth=Math.max(32,ancho*.11);
-  p.lineCap='round';p.lineJoin='round';
-  p.beginPath();p.moveTo(x1,y1);p.lineTo(x2,y2);p.stroke();
-  p.restore();
-
-  const pasos=Math.max(1,Math.ceil(Math.hypot(x2-x1,y2-y1)/12));
-  for(let i=0;i<=pasos;i++){
-    const x=x1+(x2-x1)*(i/pasos),y=y1+(y2-y1)*(i/pasos);
-    if(dentroMascara(x,y,etapa)) cobertura[etapa].add(`${Math.round(x/14)}-${Math.round(y/14)}`);
+  const paso=12;
+  for(let y=paso/2;y<alto;y+=paso){
+    for(let x=paso/2;x<ancho;x+=paso){
+      if(g.isPointInPath(mascara,x,y)) celdasObjetivo.push({x,y,key:`${Math.round(x/paso)}-${Math.round(y/paso)}`});
+    }
   }
-  comprobarCobertura();
+
+  etapaTexto.textContent=textos[etapa];
+  barra.style.width='0%';
+  barra.style.background=colores[etapa];
+  rodillo.style.setProperty('--pintura',colores[etapa]);
 }
 
-function comprobarCobertura(){
-  const estimados=[Math.max(70,ancho*alto/250),Math.max(50,ancho*alto/340),Math.max(25,ancho*alto/650)];
-  if(cobertura[etapa].size>=estimados[etapa]*objetivos[etapa]) completarEtapa();
+function registrarCobertura(x,y,radio){
+  for(const celda of celdasObjetivo){
+    if(Math.hypot(celda.x-x,celda.y-y)<=radio) celdasPintadas.add(celda.key);
+  }
+  const porcentaje=celdasObjetivo.length?celdasPintadas.size/celdasObjetivo.length:0;
+  barra.style.width=Math.min(100,porcentaje/umbrales[etapa]*100)+'%';
+  if(porcentaje>=umbrales[etapa]) completarEtapa();
+}
+
+function pintarSegmento(a,b){
+  const radio=Math.max(24,ancho*.075);
+
+  p.save();
+  p.clip(mascara);
+  p.strokeStyle=colores[etapa];
+  p.lineWidth=radio*2;
+  p.lineCap='round';
+  p.lineJoin='round';
+  p.beginPath();
+  p.moveTo(a.x,a.y);
+  p.lineTo(b.x,b.y);
+  p.stroke();
+  p.restore();
+
+  const distancia=Math.hypot(b.x-a.x,b.y-a.y);
+  const pasos=Math.max(1,Math.ceil(distancia/8));
+  for(let i=0;i<=pasos;i++){
+    const t=i/pasos;
+    registrarCobertura(a.x+(b.x-a.x)*t,a.y+(b.y-a.y)*t,radio*.78);
+  }
 }
 
 function completarEtapa(){
+  if(etapa>=3)return;
+
+  c.save();
+  c.fillStyle=colores[etapa];
+  c.fill(mascara);
+  c.restore();
+
   document.getElementById('paso'+etapa).classList.remove('activo');
   document.getElementById('paso'+etapa).classList.add('hecho');
+
   etapa++;
+  pintando=false;
+  ultimo=null;
+  rodillo.classList.remove('visible');
+
   if(etapa===3){
-    setTimeout(finalizar,450);
+    p.clearRect(0,0,ancho,alto);
+    g.clearRect(0,0,ancho,alto);
+    barra.style.width='100%';
+    setTimeout(finalizar,650);
     return;
   }
+
   document.getElementById('paso'+etapa).classList.add('activo');
-  etapaTexto.textContent=`${etapa+1}. Pinta la capa ${nombres[etapa]}`;
-  rodillo.style.setProperty('--pintura',colores[etapa]);
-  dibujarGuia();
+  prepararEtapa();
 }
 
-function pos(e){const r=pintura.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
-function iniciar(e){if(etapa>=3)return;e.preventDefault();pintando=true;ultimo=pos(e);pintura.setPointerCapture(e.pointerId);moverRodillo(ultimo);pintarLinea(ultimo.x,ultimo.y,ultimo.x+.1,ultimo.y+.1)}
-function mover(e){if(!pintando||etapa>=3)return;e.preventDefault();const ahora=pos(e);moverRodillo(ahora);pintarLinea(ultimo.x,ultimo.y,ahora.x,ahora.y);ultimo=ahora}
-function terminar(){pintando=false;ultimo=null;rodillo.classList.remove('visible')}
-function moverRodillo(pt){rodillo.style.left=pt.x+'px';rodillo.style.top=pt.y+'px';rodillo.classList.add('visible')}
+function posicion(e){
+  const r=pintura.getBoundingClientRect();
+  return{x:e.clientX-r.left,y:e.clientY-r.top};
+}
+
+function iniciar(e){
+  if(etapa>=3)return;
+  e.preventDefault();
+  pintando=true;
+  ultimo=posicion(e);
+  pintura.setPointerCapture(e.pointerId);
+  moverRodillo(ultimo);
+  pintarSegmento(ultimo,{x:ultimo.x+.1,y:ultimo.y+.1});
+}
+
+function mover(e){
+  if(!pintando||etapa>=3)return;
+  e.preventDefault();
+  const ahora=posicion(e);
+  moverRodillo(ahora);
+  pintarSegmento(ultimo,ahora);
+  ultimo=ahora;
+}
+
+function terminar(){
+  pintando=false;
+  ultimo=null;
+  rodillo.classList.remove('visible');
+}
+
+function moverRodillo(pt){
+  rodillo.style.left=pt.x+'px';
+  rodillo.style.top=pt.y+'px';
+  rodillo.classList.add('visible');
+}
 
 function finalizar(){
   document.getElementById('zonaJuego').style.opacity='0';
@@ -283,7 +355,7 @@ function finalizar(){
       document.getElementById('desxifrant').style.display='none';
       document.getElementById('recordFinal').classList.add('visible');
     },1400);
-  },600);
+  },550);
 }
 
 pintura.addEventListener('pointerdown',iniciar);
@@ -291,7 +363,7 @@ pintura.addEventListener('pointermove',mover);
 pintura.addEventListener('pointerup',terminar);
 pintura.addEventListener('pointercancel',terminar);
 window.addEventListener('resize',ajustar);
-window.addEventListener('load',()=>{ajustar();rodillo.style.setProperty('--pintura',colores[0])});
+window.addEventListener('load',ajustar);
 </script>
 </body>
 </html>
