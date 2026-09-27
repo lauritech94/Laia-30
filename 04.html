@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Objectiu localitzat</title>
+
+<style>
+:root{
+  --color:#ffd84d;
+  --color2:#ff9f43;
+  --dark:#25263a;
+  --soft:#fff7d6;
+  --target:#ff5f57;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,
+body{
+  margin:0;
+  min-height:100%;
+}
+
+body{
+  min-height:100vh;
+  padding:20px;
+  font-family:Arial,sans-serif;
+  color:var(--dark);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:
+    radial-gradient(circle at 15% 15%,rgba(255,255,255,.75),transparent 25%),
+    linear-gradient(135deg,var(--soft),#eee9ff);
+}
+
+.fondo-bolas{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:-1;
+}
+
+.bola{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(1px);
+  opacity:.23;
+  box-shadow:
+    inset -8px -10px 15px rgba(0,0,0,.12),
+    inset 7px 7px 12px rgba(255,255,255,.55);
+}
+
+.b1{
+  width:130px;
+  height:130px;
+  background:#ffd93d;
+  top:5%;
+  left:-30px;
+}
+
+.b2{
+  width:90px;
+  height:90px;
+  background:#6bcB77;
+  bottom:8%;
+  right:3%;
+}
+
+.b3{
+  width:70px;
+  height:70px;
+  background:#4d96ff;
+  top:18%;
+  right:8%;
+}
+
+.b4{
+  width:110px;
+  height:110px;
+  background:#ff6b6b;
+  bottom:-20px;
+  left:12%;
+}
+
+.tarjeta{
+  width:100%;
+  max-width:560px;
+  background:rgba(255,255,255,.96);
+  border-radius:28px;
+  padding:26px 22px;
+  box-shadow:0 18px 50px rgba(37,38,58,.18);
+  border:1px solid rgba(255,255,255,.8);
+  text-align:center;
+}
+
+#zonaJuego{
+  transition:opacity .55s ease,transform .55s ease;
+}
+
+h1{
+  font-size:28px;
+  margin:0 0 8px;
+}
+
+.subtitulo{
+  margin:0 0 16px;
+  color:#707184;
+  font-size:15px;
+}
+
+.instrucciones{
+  padding:14px 16px;
+  background:linear-gradient(135deg,var(--soft),#fff);
+  border-left:5px solid var(--color);
+  border-radius:16px;
+  text-align:left;
+  font-size:15px;
+  line-height:1.5;
+  margin-bottom:16px;
+}
+
+.cabecera-juego{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+
+.dato{
+  flex:1;
+  padding:9px 12px;
+  border-radius:999px;
+  background:#f3f3f8;
+  font-size:13px;
+  font-weight:800;
+}
+
+#area{
+  position:relative;
+  width:100%;
+  height:430px;
+  overflow:hidden;
+  border-radius:20px;
+  background:
+    radial-gradient(circle at center,rgba(255,255,255,.95),rgba(239,237,250,.92)),
+    repeating-linear-gradient(0deg,transparent 0 29px,rgba(37,38,58,.035) 30px),
+    repeating-linear-gradient(90deg,transparent 0 29px,rgba(37,38,58,.035) 30px);
+  border:3px solid var(--soft);
+  box-shadow:inset 0 0 25px rgba(37,38,58,.08);
+  touch-action:manipulation;
+}
+
+#objetivo{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:72px;
+  height:72px;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  transform:translate(-50%,-50%) scale(0);
+  cursor:pointer;
+  background:
+    radial-gradient(circle,
+      #fff 0 16%,
+      var(--target) 17% 34%,
+      #fff 35% 51%,
+      var(--target) 52% 70%,
+      #fff 71% 100%);
+  box-shadow:
+    0 8px 20px rgba(37,38,58,.25),
+    0 0 0 6px rgba(255,95,87,.12);
+  transition:
+    transform .16s ease,
+    width .2s ease,
+    height .2s ease;
+  -webkit-tap-highlight-color:transparent;
+  z-index:3;
+}
+
+#objetivo.visible{
+  transform:translate(-50%,-50%) scale(1);
+}
+
+#objetivo:active{
+  transform:translate(-50%,-50%) scale(.85);
+}
+
+#cuentaAtras{
+  position:absolute;
+  left:14px;
+  right:14px;
+  bottom:14px;
+  height:7px;
+  border-radius:999px;
+  overflow:hidden;
+  background:rgba(37,38,58,.10);
+  pointer-events:none;
+}
+
+#tiempo{
+  height:100%;
+  width:100%;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--color),var(--color2),var(--target));
+  transform-origin:left center;
+}
+
+#mensaje{
+  min-height:24px;
+  margin-top:13px;
+  font-size:15px;
+  font-weight:800;
+  color:#707184;
+}
+
+#mensaje.error{
+  color:#9a3030;
+  animation:sacudida .32s ease;
+}
+
+#mensaje.acierto{
+  color:#187542;
+}
+
+#reiniciar{
+  width:100%;
+  margin-top:10px;
+  border:0;
+  border-radius:13px;
+  padding:13px;
+  font-weight:800;
+  font-size:15px;
+  cursor:pointer;
+  color:var(--dark);
+  background:#ececf3;
+}
+
+.descifrando{
+  display:none;
+  padding:18px;
+  border-radius:15px;
+  background:#fff0ad;
+  color:#5c4700;
+  font-weight:800;
+  animation:pulso .8s ease-in-out infinite alternate;
+}
+
+.foto-contenedor{
+  max-height:0;
+  opacity:0;
+  overflow:hidden;
+  transform:translateY(20px) scale(.97);
+  transition:
+    max-height 1.8s ease,
+    opacity 1.8s ease,
+    transform 1.8s ease;
+}
+
+.foto-contenedor.visible{
+  max-height:1100px;
+  opacity:1;
+  transform:translateY(0) scale(1);
+}
+
+.foto{
+  width:100%;
+  height:auto;
+  border-radius:18px;
+  border:4px solid var(--soft);
+  display:block;
+  box-shadow:0 12px 30px rgba(37,38,58,.17);
+}
+
+.record{
+  margin-top:15px;
+  font-size:20px;
+  font-weight:800;
+  color:var(--color2);
+}
+
+@keyframes pulso{
+  from{transform:scale(1);opacity:.78}
+  to{transform:scale(1.02);opacity:1}
+}
+
+@keyframes sacudida{
+  0%,100%{transform:translateX(0)}
+  30%{transform:translateX(-7px)}
+  70%{transform:translateX(7px)}
+}
+
+@media(max-width:560px){
+  body{
+    padding:10px;
+  }
+
+  .tarjeta{
+    padding:20px 12px;
+    border-radius:22px;
+  }
+
+  h1{
+    font-size:24px;
+  }
+
+  #area{
+    height:min(58vh,430px);
+    min-height:330px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="fondo-bolas">
+  <span class="bola b1"></span>
+  <span class="bola b2"></span>
+  <span class="bola b3"></span>
+  <span class="bola b4"></span>
+</div>
+
+<main class="tarjeta">
+
+  <div id="zonaJuego">
+
+    <h1>🎯 Objectiu localitzat</h1>
+
+    <p class="subtitulo">
+      Atrapa l'objectiu abans que desaparegui.
+    </p>
+
+    <section class="instrucciones">
+      El Minion ha amagat aquest record darrere de diversos objectius.<br>
+      Toca cada diana tan aviat com aparegui. Cada ronda serà una mica més ràpida i petita.
+    </section>
+
+    <div class="cabecera-juego">
+      <div class="dato" id="ronda">RONDA 1/8</div>
+      <div class="dato" id="encerts">ENCERTS 0/8</div>
+    </div>
+
+    <div id="area">
+      <button id="objetivo" type="button" aria-label="Objectiu"></button>
+
+      <div id="cuentaAtras">
+        <div id="tiempo"></div>
+      </div>
+    </div>
+
+    <div id="mensaje">Prepara't...</div>
+
+    <button id="reiniciar" type="button" onclick="reiniciarJoc()">
+      ↺ REINICIAR
+    </button>
+
+  </div>
+
+  <div id="desxifrant" class="descifrando">
+    🔮 Desxifrant el record...
+  </div>
+
+  <div id="fotoContenidor" class="foto-contenedor">
+    <img
+      class="foto"
+      src="montcada.jpg"
+      alt="Record recuperat"
+    >
+
+    <div class="record">
+      ✨ Record recuperat
+    </div>
+  </div>
+
+</main>
+
+<script>
+const TOTAL_RONDES = 8;
+const MIDES = [72,66,60,54,48,43,38,34];
+const TEMPS = [2200,2000,1800,1600,1450,1300,1150,1000];
+
+const area = document.getElementById("area");
+const objetivo = document.getElementById("objetivo");
+const rondaEl = document.getElementById("ronda");
+const encertsEl = document.getElementById("encerts");
+const missatge = document.getElementById("mensaje");
+const tempsEl = document.getElementById("tiempo");
+
+let ronda = 0;
+let encerts = 0;
+let actiu = false;
+let completat = false;
+let temporitzador = null;
+let animacioTemps = null;
+let idAparicio = null;
+
+function actualitzarMarcadors(){
+  rondaEl.textContent = `RONDA ${Math.min(ronda + 1,TOTAL_RONDES)}/${TOTAL_RONDES}`;
+  encertsEl.textContent = `ENCERTS ${encerts}/${TOTAL_RONDES}`;
+}
+
+function posicioAleatoria(mida){
+  const marge = mida / 2 + 12;
+  const ample = area.clientWidth;
+  const alt = area.clientHeight - 30;
+
+  return {
+    x:marge + Math.random() * Math.max(1,ample - marge * 2),
+    y:marge + Math.random() * Math.max(1,alt - marge * 2)
+  };
+}
+
+function amagarObjectiu(){
+  actiu = false;
+  objetivo.classList.remove("visible");
+  clearTimeout(temporitzador);
+  temporitzador = null;
+
+  if(animacioTemps){
+    animacioTemps.cancel();
+    animacioTemps = null;
+  }
+}
+
+function iniciarBarra(durada){
+  tempsEl.style.transform = "scaleX(1)";
+
+  animacioTemps = tempsEl.animate(
+    [
+      {transform:"scaleX(1)"},
+      {transform:"scaleX(0)"}
+    ],
+    {
+      duration:durada,
+      easing:"linear",
+      fill:"forwards"
+    }
+  );
+}
+
+function mostrarObjectiu(){
+  if(completat){
+    return;
+  }
+
+  amagarObjectiu();
+  actualitzarMarcadors();
+
+  const mida = MIDES[ronda];
+  const durada = TEMPS[ronda];
+  const posicio = posicioAleatoria(mida);
+
+  objetivo.style.width = mida + "px";
+  objetivo.style.height = mida + "px";
+  objetivo.style.left = posicio.x + "px";
+  objetivo.style.top = posicio.y + "px";
+
+  missatge.className = "";
+  missatge.textContent = "Ara!";
+
+  actiu = true;
+
+  requestAnimationFrame(() => {
+    objetivo.classList.add("visible");
+    iniciarBarra(durada);
+  });
+
+  temporitzador = setTimeout(() => {
+    if(!actiu || completat){
+      return;
+    }
+
+    amagarObjectiu();
+    missatge.className = "error";
+    missatge.textContent = "Massa lent! Torna a provar aquesta ronda.";
+
+    idAparicio = setTimeout(mostrarObjectiu,850);
+  },durada);
+}
+
+function encertarObjectiu(event){
+  event.preventDefault();
+
+  if(!actiu || completat){
+    return;
+  }
+
+  amagarObjectiu();
+  encerts++;
+
+  if(navigator.vibrate){
+    navigator.vibrate(25);
+  }
+
+  missatge.className = "acierto";
+  missatge.textContent = "Encertat!";
+
+  if(encerts >= TOTAL_RONDES){
+    completarJoc();
+    return;
+  }
+
+  ronda++;
+  actualitzarMarcadors();
+  idAparicio = setTimeout(mostrarObjectiu,500);
+}
+
+function completarJoc(){
+  completat = true;
+  amagarObjectiu();
+  clearTimeout(idAparicio);
+  actualitzarMarcadors();
+
+  document.getElementById("zonaJuego").style.opacity = "0";
+  document.getElementById("zonaJuego").style.transform = "scale(.97)";
+
+  if(navigator.vibrate){
+    navigator.vibrate([40,25,90]);
+  }
+
+  setTimeout(() => {
+    document.getElementById("zonaJuego").style.display = "none";
+    document.getElementById("desxifrant").style.display = "block";
+
+    setTimeout(() => {
+      document.getElementById("desxifrant").style.display = "none";
+      document.getElementById("fotoContenidor").classList.add("visible");
+    },1500);
+  },550);
+}
+
+function reiniciarJoc(){
+  clearTimeout(temporitzador);
+  clearTimeout(idAparicio);
+
+  if(animacioTemps){
+    animacioTemps.cancel();
+  }
+
+  ronda = 0;
+  encerts = 0;
+  actiu = false;
+  completat = false;
+
+  objetivo.classList.remove("visible");
+  document.getElementById("zonaJuego").style.display = "block";
+  document.getElementById("zonaJuego").style.opacity = "1";
+  document.getElementById("zonaJuego").style.transform = "scale(1)";
+  document.getElementById("desxifrant").style.display = "none";
+  document.getElementById("fotoContenidor").classList.remove("visible");
+
+  missatge.className = "";
+  missatge.textContent = "Prepara't...";
+  tempsEl.style.transform = "scaleX(1)";
+  actualitzarMarcadors();
+
+  idAparicio = setTimeout(mostrarObjectiu,900);
+}
+
+objetivo.addEventListener("pointerdown",encertarObjectiu);
+window.addEventListener("load",reiniciarJoc);
+</script>
+
+</body>
+</html>
