@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caleidoscopio</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:radial-gradient(circle,#273754,#0a101d 75%);overflow:hidden;touch-action:manipulation}
+body{min-height:100vh;display:grid;place-items:center;padding:18px}
+#juego{position:relative;width:min(90vw,390px);aspect-ratio:1;border-radius:50%;overflow:hidden;background:#0f172a;box-shadow:0 20px 60px #000b,0 0 0 8px #ffffff12,0 0 45px #7c3aed55}
+.capa{position:absolute;inset:0;border-radius:50%;overflow:hidden;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .28s cubic-bezier(.2,.8,.2,1),filter .25s,opacity .5s}
+.capa::before{content:"";position:absolute;inset:-4%;background-image:url("foto.jpg");background-size:cover;background-position:center;transform:rotate(var(--imgrot));filter:saturate(1.18) contrast(1.08)}
+#capa1{clip-path:polygon(50% 50%,50% 0,93.3% 25%,100% 50%,93.3% 75%,50% 50%);z-index:3}
+#capa2{clip-path:polygon(50% 50%,93.3% 75%,50% 100%,6.7% 75%,0 50%,50% 50%);z-index:4}
+#capa3{clip-path:polygon(50% 50%,0 50%,6.7% 25%,50% 0,50% 50%);z-index:5}
+.separador{position:absolute;inset:0;border-radius:50%;pointer-events:none;z-index:8;background:conic-gradient(from 0deg,transparent 0 29.5deg,#ffffff38 29.5deg 30.5deg,transparent 30.5deg 89.5deg,#ffffff38 89.5deg 90.5deg,transparent 90.5deg 149.5deg,#ffffff38 149.5deg 150.5deg,transparent 150.5deg 209.5deg,#ffffff38 209.5deg 210.5deg,transparent 210.5deg 269.5deg,#ffffff38 269.5deg 270.5deg,transparent 270.5deg 329.5deg,#ffffff38 329.5deg 330.5deg,transparent 330.5deg 360deg)}
+.centro{position:absolute;left:50%;top:50%;width:38px;height:38px;transform:translate(-50%,-50%);border-radius:50%;z-index:10;background:radial-gradient(circle at 35% 30%,#fff,#a78bfa 36%,#4c1d95);box-shadow:0 0 18px #c4b5fd,0 0 35px #7c3aed;pointer-events:none}
+#revelado{position:absolute;inset:0;border-radius:50%;opacity:0;transform:scale(.65);z-index:20;background:url("foto.jpg") center/cover no-repeat;pointer-events:none;box-shadow:inset 0 0 35px #fff5}
+#flash{position:fixed;inset:0;background:white;opacity:0;pointer-events:none;z-index:99}
+.encajada{filter:drop-shadow(0 0 13px #ffe66d) brightness(1.12)}
+.resuelto .capa{animation:salir .75s ease forwards}
+.resuelto #revelado{animation:revelar .85s .25s cubic-bezier(.2,.9,.2,1) forwards}
+.resuelto #flash{animation:flash .55s ease}
+@keyframes salir{to{opacity:0;transform:rotate(180deg) scale(1.5)}}
+@keyframes revelar{0%{opacity:0;transform:scale(.65)}65%{opacity:1;transform:scale(1.08)}100%{opacity:1;transform:scale(1)}}
+@keyframes flash{0%,100%{opacity:0}45%{opacity:.9}}
+</style>
+</head>
+<body>
+<div id="juego">
+  <div id="capa1" class="capa"></div>
+  <div id="capa2" class="capa"></div>
+  <div id="capa3" class="capa"></div>
+  <div class="separador"></div>
+  <div class="centro"></div>
+  <div id="revelado"></div>
+</div>
+<div id="flash"></div>
+<script>
+const juego=document.getElementById('juego');
+const capas=[
+ {el:document.getElementById('capa1'),pasos:6,pos:2},
+ {el:document.getElementById('capa2'),pasos:6,pos:4},
+ {el:document.getElementById('capa3'),pasos:6,pos:1}
+];
+let resuelto=false;
+function normalizar(n,p){return((n%p)+p)%p}
+function pintar(){
+ capas.forEach(c=>{
+   const angulo=normalizar(c.pos,c.pasos)*(360/c.pasos);
+   c.el.style.transform=`rotate(${angulo}deg)`;
+   c.el.style.setProperty('--imgrot',`${-angulo}deg`);
+   c.el.classList.toggle('encajada',normalizar(c.pos,c.pasos)===0);
+ });
+ if(capas.every(c=>normalizar(c.pos,c.pasos)===0)&&!resuelto){
+   resuelto=true;
+   juego.classList.add('resuelto');
+   document.getElementById('flash').animate([{opacity:0},{opacity:.9},{opacity:0}],{duration:550});
+   if(navigator.vibrate)navigator.vibrate([45,30,90]);
+ }
+}
+capas.forEach(c=>{
+ c.el.addEventListener('pointerdown',e=>{
+   if(resuelto)return;
+   e.preventDefault();e.stopPropagation();
+   const r=c.el.getBoundingClientRect();
+   c.pos+=e.clientX<r.left+r.width/2?-1:1;
+   pintar();
+ });
+});
+pintar();
+</script>
+</body>
+</html>
