@@ -1,278 +1,250 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Imanes</title>
 
 <style>
 
-html,body{
-margin:0;
-width:100%;
-height:100%;
-overflow:hidden;
-background:#111827;
-font-family:Arial;
-}
-
-#juego{
-position:relative;
-width:100vw;
-height:100vh;
+body{
+    margin:0;
+    height:100vh;
+    overflow:hidden;
+    background:#111827;
+    font-family:Arial;
 }
 
 .iman{
 
-position:absolute;
+    position:absolute;
 
-width:80px;
-height:80px;
+    width:90px;
+    height:90px;
 
-border-radius:20px;
+    border-radius:20px;
 
-display:flex;
-justify-content:center;
-align-items:center;
+    background:white;
 
-font-size:42px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 
-background:white;
+    font-size:48px;
 
-box-shadow:
-0 4px 15px rgba(0,0,0,.25);
+    cursor:grab;
 
-cursor:grab;
+    user-select:none;
 
-user-select:none;
+    box-shadow:
+    0 4px 15px rgba(0,0,0,.3);
 }
 
-.unido{
-background:#d8ffe0;
+.bloqueado{
+
+    background:#dfffe5;
+
+    border:4px solid #4caf50;
 }
 
-#victoria{
+#mensaje{
 
-position:absolute;
+    position:fixed;
 
-inset:0;
+    top:20px;
+    left:50%;
 
-display:flex;
+    transform:translateX(-50%);
 
-justify-content:center;
-align-items:center;
+    color:white;
 
-opacity:0;
+    font-size:28px;
 
-transition:.5s;
-
-pointer-events:none;
-
+    opacity:0;
 }
 
-#victoria.mostrar{
-opacity:1;
-}
-
-#orb{
-
-width:150px;
-height:150px;
-
-border-radius:50%;
-
-background:
-radial-gradient(
-circle,
-white,
-#ffe66d,
-#ff9f43
-);
-
-box-shadow:
-0 0 50px #ffe66d,
-0 0 120px #ff9f43;
-
+.mostrar{
+    opacity:1 !important;
 }
 
 </style>
-</head>
 
+</head>
 <body>
 
-<div id="juego">
-
-<div class="iman" id="vespa" style="left:100px;top:120px;">🛵</div>
-
-<div class="iman" id="cine" style="left:300px;top:120px;">🎬</div>
-
-<div class="iman" id="amor" style="left:120px;top:320px;">❤️</div>
-
-<div class="iman" id="pingu" style="left:320px;top:320px;">🐧</div>
-
-<div class="iman" id="arte" style="left:150px;top:520px;">🎨</div>
-
-<div class="iman" id="flores" style="left:350px;top:520px;">🌸</div>
-
-<div id="victoria">
-    <div id="orb"></div>
+<div id="vespa" class="iman" style="left:80px;top:100px;">
+🛵
 </div>
 
+<div id="cine" class="iman" style="left:300px;top:100px;">
+🎬
+</div>
+
+<div id="amor" class="iman" style="left:80px;top:300px;">
+❤️
+</div>
+
+<div id="pingu" class="iman" style="left:300px;top:300px;">
+🐧
+</div>
+
+<div id="arte" class="iman" style="left:80px;top:500px;">
+🎨
+</div>
+
+<div id="flores" class="iman" style="left:300px;top:500px;">
+🌸
+</div>
+
+<div id="mensaje">
+✨ COMPLETADO ✨
 </div>
 
 <script>
 
 const parejas = {
 
-vespa:"cine",
-cine:"vespa",
+    vespa : "cine",
+    cine : "vespa",
 
-amor:"pingu",
-pingu:"amor",
+    amor : "pingu",
+    pingu : "amor",
 
-arte:"flores",
-flores:"arte"
-
+    arte : "flores",
+    flores : "arte"
 };
 
-let uniones = 0;
-
-const piezas =
-document.querySelectorAll(
-".iman"
-);
-
-piezas.forEach(
-activarArrastre
-);
-
-function activarArrastre(el){
-
-let moviendo=false;
-
-let offsetX=0;
-let offsetY=0;
-
-el.addEventListener(
-"pointerdown",
-e=>{
-
-if(el.classList.contains(
-"unido"
-)) return;
-
-moviendo=true;
-
-offsetX=e.offsetX;
-offsetY=e.offsetY;
-
-});
-
-document.addEventListener(
-"pointermove",
-e=>{
-
-if(!moviendo) return;
-
-el.style.left=
-(e.clientX-offsetX)+"px";
-
-el.style.top=
-(e.clientY-offsetY)+"px";
-
-comprobarSnap(el);
-
-});
-
-document.addEventListener(
-"pointerup",
-()=>{
-
-moviendo=false;
-
-});
-
-}
-
-function comprobarSnap(a){
-
-const parejaId =
-parejas<a.id>;
-
-const b =
-document.getElementById(
-parejaId
-);
-
-if(
-a.classList.contains("unido")
-||
-b.classList.contains("unido")
-){
-return;
-}
-
-const ax =
-parseFloat(a.style.left);
-
-const ay =
-parseFloat(a.style.top);
-
-const bx =
-parseFloat(b.style.left);
-
-const by =
-parseFloat(b.style.top);
-
-const d =
-Math.hypot(
-ax-bx,
-ay-by
-);
-
-if(d<90){
-
-a.style.left=
-((ax+bx)/2-40)+"px";
-
-a.style.top=
-((ay+by)/2)+"px";
-
-b.style.left=
-((ax+bx)/2+40)+"px";
-
-b.style.top=
-((ay+by)/2)+"px";
-
-a.classList.add(
-"unido"
-);
-
-b.classList.add(
-"unido"
-);
-
-uniones++;
-
-if(
-navigator.vibrate
-){
-navigator.vibrate(30);
-}
-
-if(uniones===3){
+let parejasHechas = 0;
 
 document
-.getElementById(
-"victoria"
-)
-.classList.add(
-"mostrar"
-);
+.querySelectorAll(".iman")
+.forEach(activar);
+
+function activar(el){
+
+    let moviendo = false;
+
+    let dx = 0;
+    let dy = 0;
+
+    el.addEventListener("pointerdown",e=>{
+
+        if(el.classList.contains("bloqueado"))
+            return;
+
+        moviendo = true;
+
+        const r =
+        el.getBoundingClientRect();
+
+        dx = e.clientX - r.left;
+        dy = e.clientY - r.top;
+
+        el.setPointerCapture(
+        e.pointerId
+        );
+
+    });
+
+    el.addEventListener("pointermove",e=>{
+
+        if(!moviendo)
+            return;
+
+        el.style.left =
+        (e.clientX - dx) + "px";
+
+        el.style.top =
+        (e.clientY - dy) + "px";
+
+        revisar(el);
+
+    });
+
+    el.addEventListener("pointerup",()=>{
+
+        moviendo = false;
+
+    });
 
 }
 
-}
+function revisar(a){
+
+    const pareja =
+    document.getElementById(
+    parejas[a.id]
+    );
+
+    if(
+        a.classList.contains("bloqueado")
+        ||
+        pareja.classList.contains("bloqueado")
+    ){
+        return;
+    }
+
+    const ax =
+    parseInt(a.style.left);
+
+    const ay =
+    parseInt(a.style.top);
+
+    const bx =
+    parseInt(pareja.style.left);
+
+    const by =
+    parseInt(pareja.style.top);
+
+    const distancia =
+    Math.hypot(
+        ax-bx,
+        ay-by
+    );
+
+    if(distancia < 100){
+
+        const mx =
+        (ax+bx)/2;
+
+        const my =
+        (ay+by)/2;
+
+        a.style.left =
+        (mx-50)+"px";
+
+        pareja.style.left =
+        (mx+50)+"px";
+
+        a.style.top =
+        my+"px";
+
+        pareja.style.top =
+        my+"px";
+
+        a.classList.add(
+        "bloqueado"
+        );
+
+        pareja.classList.add(
+        "bloqueado"
+        );
+
+        parejasHechas++;
+
+        if(parejasHechas===3){
+
+            document
+            .getElementById(
+            "mensaje"
+            )
+            .classList.add(
+            "mostrar"
+            );
+
+        }
+
+    }
 
 }
 
