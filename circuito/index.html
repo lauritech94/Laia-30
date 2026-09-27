@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Circuito</title>
+
+<style>
+
+body{
+    margin:0;
+    background:#0f172a;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:Arial;
+}
+
+#tablero{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(4,70px);
+
+    gap:8px;
+}
+
+.pieza{
+
+    width:70px;
+    height:70px;
+
+    background:#1e293b;
+
+    border-radius:12px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    color:white;
+
+    font-size:32px;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.pieza.activa{
+
+    background:#22c55e;
+
+    box-shadow:
+    0 0 15px #22c55e;
+}
+
+#destino{
+
+    margin-top:25px;
+
+    width:60px;
+    height:60px;
+
+    border-radius:50%;
+
+    background:#444;
+
+    margin-left:auto;
+    margin-right:auto;
+
+    transition:.3s;
+}
+
+#destino.on{
+
+    background:#ffe66d;
+
+    box-shadow:
+    0 0 30px #ffe66d;
+}
+
+.contenedor{
+
+    text-align:center;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="contenedor">
+
+<div id="tablero">
+
+<div class="pieza" data-tipo="codo">└</div>
+<div class="pieza" data-tipo="recta">─</div>
+<div class="pieza" data-tipo="codo">┐</div>
+<div class="pieza" data-tipo="recta">│</div>
+
+<div class="pieza" data-tipo="codo">┌</div>
+<div class="pieza" data-tipo="codo">┘</div>
+<div class="pieza" data-tipo="recta">─</div>
+<div class="pieza" data-tipo="codo">└</div>
+
+<div class="pieza" data-tipo="recta">│</div>
+<div class="pieza" data-tipo="codo">┐</div>
+<div class="pieza" data-tipo="codo">┌</div>
+<div class="pieza" data-tipo="recta">─</div>
+
+</div>
+
+<div id="destino"></div>
+
+</div>
+
+<script>
+
+const piezas =
+document.querySelectorAll(".pieza");
+
+const rotaciones = {
+
+    "─":["─","│"],
+    "│":["│","─"],
+
+    "┌":["┌","┐","┘","└"],
+    "┐":["┐","┘","└","┌"],
+    "┘":["┘","└","┌","┐"],
+    "└":["└","┌","┐","┘"]
+
+};
+
+piezas.forEach(p=>{
+
+    p.onclick = ()=>{
+
+        const actual =
+        p.textContent;
+
+        const lista =
+        rotaciones[actual];
+
+        const indice =
+        lista.indexOf(actual);
+
+        const siguiente =
+        lista[
+            (indice+1)
+            %
+            lista.length
+        ];
+
+        p.textContent =
+        siguiente;
+
+        comprobar();
+
+    };
+
+});
+
+function comprobar(){
+
+    let correctas = 0;
+
+    piezas.forEach(p=>{
+
+        const t =
+        p.textContent;
+
+        if(
+            t==="─"
+            ||
+            t==="│"
+        ){
+
+            correctas++;
+
+            p.classList.add(
+            "activa");
+
+        }
+
+        else{
+
+            p.classList.remove(
+            "activa");
+
+        }
+
+    });
+
+    if(correctas >= 8){
+
+        document
+        .getElementById(
+        "destino")
+        .classList.add(
+        "on");
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
