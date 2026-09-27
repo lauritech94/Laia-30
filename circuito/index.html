@@ -3,211 +3,138 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Circuito</title>
-
+<title>Circuito conectado</title>
 <style>
-
-body{
-    margin:0;
-    background:#0f172a;
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-family:Arial;
-}
-
-#tablero{
-
-    display:grid;
-
-    grid-template-columns:
-    repeat(4,70px);
-
-    gap:8px;
-}
-
-.pieza{
-
-    width:70px;
-    height:70px;
-
-    background:#1e293b;
-
-    border-radius:12px;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    color:white;
-
-    font-size:32px;
-
-    cursor:pointer;
-
-    transition:.2s;
-}
-
-.pieza.activa{
-
-    background:#22c55e;
-
-    box-shadow:
-    0 0 15px #22c55e;
-}
-
-#destino{
-
-    margin-top:25px;
-
-    width:60px;
-    height:60px;
-
-    border-radius:50%;
-
-    background:#444;
-
-    margin-left:auto;
-    margin-right:auto;
-
-    transition:.3s;
-}
-
-#destino.on{
-
-    background:#ffe66d;
-
-    box-shadow:
-    0 0 30px #ffe66d;
-}
-
-.contenedor{
-
-    text-align:center;
-}
-
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:radial-gradient(circle at center,#233452,#0b1220 72%);font-family:Arial,sans-serif;overflow:hidden}
+body{min-height:100vh;display:grid;place-items:center;padding:18px}
+#juego{position:relative;width:min(92vw,390px);aspect-ratio:1;padding:18px;border-radius:24px;background:#111c30;box-shadow:0 20px 60px #0009,inset 0 0 25px #ffffff0d}
+#tablero{width:100%;height:100%;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);gap:7px}
+.pieza{position:relative;border:0;border-radius:13px;background:#1c2a42;box-shadow:inset 0 0 0 2px #ffffff0b,0 5px 9px #0005;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:background .2s,box-shadow .2s,transform .13s}
+.pieza:active{transform:scale(.96)}
+.trazo{position:absolute;inset:0;transform:rotate(var(--rot));transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+.linea{position:absolute;background:#6f809c;border-radius:999px;box-shadow:inset 0 0 0 1px #ffffff19;transition:background .2s,box-shadow .2s}
+.n{width:12px;height:50%;left:calc(50% - 6px);top:0}
+.e{height:12px;width:50%;top:calc(50% - 6px);right:0}
+.s{width:12px;height:50%;left:calc(50% - 6px);bottom:0}
+.w{height:12px;width:50%;top:calc(50% - 6px);left:0}
+.centro{position:absolute;width:22px;height:22px;left:calc(50% - 11px);top:calc(50% - 11px);border-radius:50%;background:#6f809c;box-shadow:inset 0 0 0 2px #ffffff1c;transition:background .2s,box-shadow .2s}
+.pieza.energia{background:#19344a;box-shadow:inset 0 0 0 2px #5ce7ff66,0 0 15px #22d3ee55}
+.pieza.energia .linea,.pieza.energia .centro{background:#65efff;box-shadow:0 0 8px #43dff8,0 0 18px #22d3ee}
+.terminal{position:absolute;width:26px;height:64px;border-radius:13px;background:#263650;z-index:4;box-shadow:0 0 18px #0008,inset 0 0 0 2px #ffffff18}
+#origen{left:-9px;top:26px;background:#19c6df;box-shadow:0 0 20px #22d3ee}
+#destino{left:26px;bottom:-9px;background:#4a5265;transition:.3s}
+#destino.on{background:#ffe66d;box-shadow:0 0 20px #ffe66d,0 0 50px #ffb703}
+#abierto{position:absolute;inset:18%;display:grid;place-items:center;border-radius:50%;opacity:0;transform:scale(.25);pointer-events:none;z-index:10;background:radial-gradient(circle at 35% 28%,#fff,#ffe66d 20%,#ff9f43 55%,#7c3aed);box-shadow:0 0 40px #ffe66d,0 0 100px #ff9f4388;font-size:70px}
+.resuelto #tablero{animation:desaparecer .7s .35s forwards}
+.resuelto #abierto{animation:revelar .8s .45s cubic-bezier(.2,.9,.2,1) forwards}
+.resuelto #destino{background:#ffe66d;box-shadow:0 0 25px #ffe66d,0 0 60px #ffb703}
+@keyframes desaparecer{to{opacity:0;transform:scale(1.15)}}
+@keyframes revelar{0%{opacity:0;transform:scale(.25)}65%{opacity:1;transform:scale(1.13)}100%{opacity:1;transform:scale(1)}}
 </style>
 </head>
-
 <body>
-
-<div class="contenedor">
-
-<div id="tablero">
-
-<div class="pieza" data-tipo="codo">└</div>
-<div class="pieza" data-tipo="recta">─</div>
-<div class="pieza" data-tipo="codo">┐</div>
-<div class="pieza" data-tipo="recta">│</div>
-
-<div class="pieza" data-tipo="codo">┌</div>
-<div class="pieza" data-tipo="codo">┘</div>
-<div class="pieza" data-tipo="recta">─</div>
-<div class="pieza" data-tipo="codo">└</div>
-
-<div class="pieza" data-tipo="recta">│</div>
-<div class="pieza" data-tipo="codo">┐</div>
-<div class="pieza" data-tipo="codo">┌</div>
-<div class="pieza" data-tipo="recta">─</div>
-
+<div id="juego">
+  <div id="origen" class="terminal"></div>
+  <div id="destino" class="terminal"></div>
+  <div id="tablero"></div>
+  <div id="abierto">🔑</div>
 </div>
-
-<div id="destino"></div>
-
-</div>
-
 <script>
+const N=1,E=2,S=4,W=8;
+const opuesto={1:S,2:W,4:N,8:E};
+const dr={1:-1,2:0,4:1,8:0};
+const dc={1:0,2:1,4:0,8:-1};
+const dirs=[N,E,S,W];
 
-const piezas =
-document.querySelectorAll(".pieza");
+/* Solución en forma de serpiente: entra por la izquierda de la casilla 0
+   y sale por abajo de la casilla 12. */
+const base=[
+ W|E, W|E, W|E, W|S,
+ E|S, E|W, E|W, N|W,
+ N|E, W|E, W|E, W|S,
+ S|E, E|W, E|W, N|W
+];
 
-const rotaciones = {
+const rotaciones=base.map(()=>Math.floor(Math.random()*4));
+const tablero=document.getElementById('tablero');
+const juego=document.getElementById('juego');
+let terminado=false;
 
-    "─":["─","│"],
-    "│":["│","─"],
-
-    "┌":["┌","┐","┘","└"],
-    "┐":["┐","┘","└","┌"],
-    "┘":["┘","└","┌","┐"],
-    "└":["└","┌","┐","┘"]
-
-};
-
-piezas.forEach(p=>{
-
-    p.onclick = ()=>{
-
-        const actual =
-        p.textContent;
-
-        const lista =
-        rotaciones[actual];
-
-        const indice =
-        lista.indexOf(actual);
-
-        const siguiente =
-        lista[
-            (indice+1)
-            %
-            lista.length
-        ];
-
-        p.textContent =
-        siguiente;
-
-        comprobar();
-
-    };
-
-});
-
-function comprobar(){
-
-    let correctas = 0;
-
-    piezas.forEach(p=>{
-
-        const t =
-        p.textContent;
-
-        if(
-            t==="─"
-            ||
-            t==="│"
-        ){
-
-            correctas++;
-
-            p.classList.add(
-            "activa");
-
-        }
-
-        else{
-
-            p.classList.remove(
-            "activa");
-
-        }
-
-    });
-
-    if(correctas >= 8){
-
-        document
-        .getElementById(
-        "destino")
-        .classList.add(
-        "on");
-
-    }
-
+function rotarMascara(mask,veces){
+ let m=mask;
+ for(let i=0;i<veces;i++) m=((m<<1)&15)|((m&8)?1:0);
+ return m;
 }
 
-</script>
+function crearPieza(indice){
+ const boton=document.createElement('button');
+ boton.className='pieza';
+ boton.type='button';
+ const trazo=document.createElement('div');
+ trazo.className='trazo';
+ ['n','e','s','w'].forEach((clase,i)=>{
+   if(base[indice] & dirs[i]){
+     const linea=document.createElement('span');
+     linea.className='linea '+clase;
+     trazo.appendChild(linea);
+   }
+ });
+ const centro=document.createElement('span');
+ centro.className='centro';
+ trazo.appendChild(centro);
+ boton.appendChild(trazo);
+ boton.addEventListener('click',()=>{
+   if(terminado)return;
+   rotaciones[indice]=(rotaciones[indice]+1)%4;
+   pintar();
+ });
+ tablero.appendChild(boton);
+}
 
+base.forEach((_,i)=>crearPieza(i));
+
+function obtenerMascaras(){return base.map((m,i)=>rotarMascara(m,rotaciones[i]));}
+
+function conectadasDesdeOrigen(masks){
+ const visitadas=new Set();
+ if(!(masks[0]&W))return visitadas;
+ const cola=[0]; visitadas.add(0);
+ while(cola.length){
+   const actual=cola.shift();
+   const r=Math.floor(actual/4),c=actual%4;
+   for(const d of dirs){
+     if(!(masks[actual]&d))continue;
+     const nr=r+dr[d],nc=c+dc[d];
+     if(nr<0||nr>=4||nc<0||nc>=4)continue;
+     const sig=nr*4+nc;
+     if((masks[sig]&opuesto[d])&&!visitadas.has(sig)){
+       visitadas.add(sig); cola.push(sig);
+     }
+   }
+ }
+ return visitadas;
+}
+
+function pintar(){
+ const masks=obtenerMascaras();
+ const energia=conectadasDesdeOrigen(masks);
+ [...tablero.children].forEach((pieza,i)=>{
+   pieza.querySelector('.trazo').style.setProperty('--rot',`${rotaciones[i]*90}deg`);
+   pieza.classList.toggle('energia',energia.has(i));
+ });
+ const exito=energia.has(12)&&(masks[12]&S);
+ document.getElementById('destino').classList.toggle('on',exito);
+ if(exito&&!terminado){
+   terminado=true;
+   juego.classList.add('resuelto');
+   if(navigator.vibrate)navigator.vibrate([50,30,100]);
+ }
+}
+
+/* Evita que el tablero aparezca resuelto de inicio. */
+if(rotaciones.every(v=>v===0))rotaciones[5]=1;
+pintar();
+</script>
 </body>
 </html>
