@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Esfera de Memoria</title>
+
+<style>
+:root{
+  --color:#ffd84d;
+  --color2:#ff9f43;
+  --dark:#25263a;
+  --soft:#fff7d6;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  padding:20px;
+  font-family:Arial,sans-serif;
+  color:var(--dark);
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  background:
+    radial-gradient(circle at 15% 15%,rgba(255,255,255,.75),transparent 25%),
+    linear-gradient(135deg,var(--soft),#eee9ff);
+}
+
+.fondo-bolas{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:-1;
+}
+
+.bola{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(1px);
+  opacity:.23;
+
+  box-shadow:
+    inset -8px -10px 15px rgba(0,0,0,.12),
+    inset 7px 7px 12px rgba(255,255,255,.55);
+}
+
+.b1{
+  width:130px;
+  height:130px;
+  background:#ffd93d;
+  top:5%;
+  left:-30px;
+}
+
+.b2{
+  width:90px;
+  height:90px;
+  background:#6bcB77;
+  bottom:8%;
+  right:3%;
+}
+
+.b3{
+  width:70px;
+  height:70px;
+  background:#4d96ff;
+  top:18%;
+  right:8%;
+}
+
+.b4{
+  width:110px;
+  height:110px;
+  background:#ff6b6b;
+  bottom:-20px;
+  left:12%;
+}
+
+.tarjeta{
+  width:100%;
+  max-width:520px;
+
+  background:rgba(255,255,255,.96);
+
+  border-radius:28px;
+  padding:28px 24px;
+
+  box-shadow:0 18px 50px rgba(37,38,58,.18);
+
+  border:1px solid rgba(255,255,255,.8);
+
+  text-align:center;
+}
+
+.cabecera{
+  display:flex;
+  justify-content:flex-start;
+  align-items:center;
+  margin-bottom:18px;
+}
+
+.mundo{
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:1.2px;
+  text-transform:uppercase;
+  color:var(--color2);
+}
+
+.icono{
+  font-size:56px;
+  line-height:1;
+  margin:6px 0 12px;
+
+  filter:drop-shadow(
+    0 5px 5px rgba(0,0,0,.15)
+  );
+}
+
+h1{
+  font-size:28px;
+  margin:0 0 10px;
+}
+
+.subtitulo{
+  margin:0 0 20px;
+  color:#707184;
+  font-size:15px;
+}
+
+.pista{
+  padding:20px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--soft),
+      #fff
+    );
+
+  border-left:5px solid var(--color);
+
+  border-radius:16px;
+
+  text-align:left;
+
+  font-size:18px;
+  line-height:1.6;
+
+  white-space:pre-line;
+}
+
+.final{
+  margin-top:22px;
+
+  font-size:20px;
+  font-weight:800;
+
+  color:var(--color2);
+}
+
+@media(max-width:420px){
+
+  body{
+    padding:12px;
+  }
+
+  .tarjeta{
+    padding:24px 18px;
+  }
+
+  .pista{
+    font-size:17px;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<div class="fondo-bolas">
+  <span class="bola b1"></span>
+  <span class="bola b2"></span>
+  <span class="bola b3"></span>
+  <span class="bola b4"></span>
+</div>
+
+<main class="tarjeta">
+
+  <div class="cabecera">
+    <div class="mundo">
+      CUARTEL GENERAL
+    </div>
+  </div>
+
+  <div class="icono">🔮</div>
+
+  <h1>El Traviesillo de los Recuerdos</h1>
+
+  <p class="subtitulo">
+    Una pequeña explicación antes de comenzar
+  </p>
+
+  <section class="pista">
+
+Esta noche un Minion muy travieso ha querido robarte tus recuerdos.
+
+Por suerte hemos conseguido recuperarlos antes de que desaparecieran.
+
+Pero, como no podía irse sin hacer alguna de las suyas, ha mezclado los recuerdos y ha encriptado el contenido de las esferas de memoria.
+
+Ahora ya no puedes ver qué guarda cada una de ellas.
+
+Si quieres volver a descubrir tus recuerdos, tendrás que descifrar las esferas una a una para revelar lo que contienen.
+
+Dentro encontrarás fotografías, aventuras, personas, historias y momentos especiales que forman parte de tu vida.
+
+✨
+
+Como queremos ayudarte, esta primera esfera ya ha sido descifrada.
+
+Las siguientes dependerán de ti.
+
+  </section>
+
+  <div class="final">
+    Busca la siguiente esfera para comenzar la aventura.
+  </div>
+
+</main>
+
+</body>
+</html>
