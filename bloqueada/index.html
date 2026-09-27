@@ -3,222 +3,192 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prototipo de engranajes</title>
+<title>Engranajes con giro bidireccional</title>
 <style>
-* { box-sizing: border-box; }
-html, body {
-  margin: 0;
-  width: 100%;
-  min-height: 100%;
-  overflow: hidden;
-  background: radial-gradient(circle at center, #263653 0%, #111a2d 58%, #090e19 100%);
-  font-family: Arial, sans-serif;
-  touch-action: manipulation;
+*{box-sizing:border-box}
+html,body{
+  margin:0;
+  width:100%;
+  min-height:100%;
+  overflow:hidden;
+  background:radial-gradient(circle at center,#263653 0%,#111a2d 58%,#090e19 100%);
+  touch-action:manipulation;
 }
-
-#escena {
-  position: relative;
-  width: min(94vw, 430px);
-  height: min(94vw, 430px);
-  margin: 50vh auto 0;
-  transform: translateY(-50%);
+#escena{
+  position:relative;
+  width:min(94vw,430px);
+  height:min(94vw,430px);
+  margin:50vh auto 0;
+  transform:translateY(-50%);
 }
-
-.objetivo {
-  position: absolute;
-  left: 50%;
-  top: 5px;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 16px solid transparent;
-  border-right: 16px solid transparent;
-  border-top: 28px solid #ffe66d;
-  filter: drop-shadow(0 0 8px #ffe66d);
-  z-index: 20;
+.objetivo{
+  position:absolute;
+  left:50%;
+  top:3px;
+  transform:translateX(-50%);
+  width:0;
+  height:0;
+  border-left:16px solid transparent;
+  border-right:16px solid transparent;
+  border-top:29px solid #ffe66d;
+  filter:drop-shadow(0 0 8px #ffe66d);
+  z-index:30;
 }
-
-.engranaje {
-  --size: 300px;
-  --teeth: 12;
-  --rot: 0deg;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: var(--size);
-  height: var(--size);
-  transform: translate(-50%, -50%) rotate(var(--rot));
-  border-radius: 50%;
-  cursor: pointer;
-  user-select: none;
-  -webkit-user-select: none;
-  transition: transform 220ms cubic-bezier(.2,.8,.2,1), filter 180ms;
-  filter: drop-shadow(0 9px 13px rgba(0,0,0,.42));
+.engranaje{
+  --size:300px;
+  --teeth:12;
+  --rot:0deg;
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:var(--size);
+  height:var(--size);
+  transform:translate(-50%,-50%) rotate(var(--rot));
+  border-radius:50%;
+  cursor:pointer;
+  user-select:none;
+  -webkit-user-select:none;
+  transition:transform 220ms cubic-bezier(.2,.8,.2,1),filter 180ms;
+  filter:drop-shadow(0 9px 13px rgba(0,0,0,.42));
+  -webkit-tap-highlight-color:transparent;
 }
-
-.engranaje::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
+.engranaje::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  background:repeating-conic-gradient(
+    from calc(180deg / var(--teeth)),
+    #9eaec6 0deg 13deg,
+    transparent 13deg calc(360deg / var(--teeth))
+  );
+  -webkit-mask:radial-gradient(circle,transparent 0 67%,#000 68% 100%);
+  mask:radial-gradient(circle,transparent 0 67%,#000 68% 100%);
+}
+.engranaje::after{
+  content:"";
+  position:absolute;
+  inset:12%;
+  border-radius:50%;
+  border:8px solid rgba(225,236,255,.35);
   background:
-    repeating-conic-gradient(
-      from calc(180deg / var(--teeth)),
-      #9eaec6 0deg calc(13deg),
-      transparent calc(13deg) calc(360deg / var(--teeth))
-    );
-  -webkit-mask: radial-gradient(circle, transparent 0 67%, #000 68% 100%);
-  mask: radial-gradient(circle, transparent 0 67%, #000 68% 100%);
+    radial-gradient(circle at 35% 28%,rgba(255,255,255,.44),transparent 15%),
+    radial-gradient(circle,#60728f 0 13%,#1f2b40 14% 24%,#7185a3 25% 59%,#26344c 60% 100%);
+  box-shadow:inset 0 0 25px rgba(255,255,255,.14),inset 0 -15px 25px rgba(0,0,0,.40),0 0 0 3px rgba(255,255,255,.08);
 }
-
-.engranaje::after {
-  content: "";
-  position: absolute;
-  inset: 12%;
-  border-radius: 50%;
-  border: 8px solid rgba(225,236,255,.35);
-  background:
-    radial-gradient(circle at 35% 28%, rgba(255,255,255,.44), transparent 15%),
-    radial-gradient(circle, #60728f 0 13%, #1f2b40 14% 24%, #7185a3 25% 59%, #26344c 60% 100%);
-  box-shadow:
-    inset 0 0 25px rgba(255,255,255,.14),
-    inset 0 -15px 25px rgba(0,0,0,.40),
-    0 0 0 3px rgba(255,255,255,.08);
+#grande{--size:350px;--teeth:16;z-index:2}
+#mediano{--size:255px;--teeth:12;z-index:5}
+#pequeno{--size:165px;--teeth:8;z-index:8}
+.marca{
+  position:absolute;
+  left:50%;
+  top:3%;
+  transform:translateX(-50%);
+  width:22px;
+  height:34px;
+  border-radius:6px 6px 12px 12px;
+  background:linear-gradient(#fffbd0,#ffd83d 56%,#e49a00);
+  box-shadow:0 0 12px #ffe66d,0 0 22px rgba(255,230,109,.55);
+  z-index:15;
+  pointer-events:none;
 }
-
-#grande { --size: 350px; --teeth: 16; z-index: 2; }
-#mediano { --size: 255px; --teeth: 12; z-index: 5; }
-#pequeno { --size: 165px; --teeth: 8; z-index: 8; }
-
-.marca {
-  position: absolute;
-  left: 50%;
-  top: 3%;
-  transform: translateX(-50%);
-  width: 22px;
-  height: 34px;
-  border-radius: 6px 6px 12px 12px;
-  background: linear-gradient(#fffbd0, #ffd83d 56%, #e49a00);
-  box-shadow: 0 0 12px #ffe66d, 0 0 22px rgba(255,230,109,.55);
-  z-index: 15;
+.nucleo{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:72px;
+  height:72px;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  z-index:12;
+  background:radial-gradient(circle at 35% 30%,#ecf8ff,#7ed6ff 22%,#4864dd 55%,#202858 100%);
+  box-shadow:0 0 14px #5ec8ff,inset 0 -10px 17px rgba(0,0,0,.35);
+  pointer-events:none;
 }
-
-.nucleo {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 72px;
-  height: 72px;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  z-index: 12;
-  background: radial-gradient(circle at 35% 30%, #ecf8ff, #7ed6ff 22%, #4864dd 55%, #202858 100%);
-  box-shadow: 0 0 14px #5ec8ff, inset 0 -10px 17px rgba(0,0,0,.35);
-  pointer-events: none;
+#abierto{
+  position:absolute;
+  inset:17%;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  opacity:0;
+  transform:scale(.25);
+  z-index:40;
+  pointer-events:none;
+  background:radial-gradient(circle at 36% 28%,white,#ffe66d 18%,#ffab2e 50%,#8d3e9d 100%);
+  box-shadow:0 0 35px #ffe66d,0 0 90px rgba(255,180,80,.8);
 }
-
-#destello {
-  position: fixed;
-  inset: 0;
-  background: white;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 99;
+#abierto span{font-size:72px}
+#destello{
+  position:fixed;
+  inset:0;
+  background:white;
+  opacity:0;
+  pointer-events:none;
+  z-index:99;
 }
-
-#abierto {
-  position: absolute;
-  inset: 17%;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  opacity: 0;
-  transform: scale(.25);
-  z-index: 30;
-  pointer-events: none;
-  background: radial-gradient(circle at 36% 28%, white, #ffe66d 18%, #ffab2e 50%, #8d3e9d 100%);
-  box-shadow: 0 0 35px #ffe66d, 0 0 90px rgba(255,180,80,.8);
-}
-
-#abierto span { font-size: 72px; }
-
-.abriendo #grande { animation: abrirGrande 900ms ease forwards; }
-.abriendo #mediano { animation: abrirMediano 900ms ease forwards; }
-.abriendo #pequeno { animation: abrirPequeno 900ms ease forwards; }
-.abriendo #abierto { animation: revelar 900ms 180ms cubic-bezier(.2,.9,.2,1) forwards; }
-.abriendo #destello { animation: flash 580ms ease; }
-
-@keyframes abrirGrande {
-  to { opacity: 0; transform: translate(-50%, -50%) rotate(160deg) scale(1.35); }
-}
-@keyframes abrirMediano {
-  to { opacity: 0; transform: translate(-50%, -50%) rotate(-220deg) scale(.35); }
-}
-@keyframes abrirPequeno {
-  to { opacity: 0; transform: translate(-50%, -50%) rotate(260deg) scale(1.7); }
-}
-@keyframes revelar {
-  0% { opacity: 0; transform: scale(.25); }
-  62% { opacity: 1; transform: scale(1.13); }
-  100% { opacity: 1; transform: scale(1); }
-}
-@keyframes flash {
-  0%,100% { opacity: 0; }
-  45% { opacity: .9; }
-}
-
-.encajado { filter: drop-shadow(0 0 16px #ffe66d); }
-
-@media (max-width: 390px) {
-  #escena { transform: translateY(-50%) scale(.88); }
-}
+.encajado{filter:drop-shadow(0 0 16px #ffe66d)}
+.abriendo #grande{animation:abrirGrande 900ms ease forwards}
+.abriendo #mediano{animation:abrirMediano 900ms ease forwards}
+.abriendo #pequeno{animation:abrirPequeno 900ms ease forwards}
+.abriendo #abierto{animation:revelar 900ms 180ms cubic-bezier(.2,.9,.2,1) forwards}
+.abriendo~#destello{animation:flash 580ms ease}
+@keyframes abrirGrande{to{opacity:0;transform:translate(-50%,-50%) rotate(160deg) scale(1.35)}}
+@keyframes abrirMediano{to{opacity:0;transform:translate(-50%,-50%) rotate(-220deg) scale(.35)}}
+@keyframes abrirPequeno{to{opacity:0;transform:translate(-50%,-50%) rotate(260deg) scale(1.7)}}
+@keyframes revelar{0%{opacity:0;transform:scale(.25)}62%{opacity:1;transform:scale(1.13)}100%{opacity:1;transform:scale(1)}}
+@keyframes flash{0%,100%{opacity:0}45%{opacity:.9}}
+@media(max-width:390px){#escena{transform:translateY(-50%) scale(.88)}}
 </style>
 </head>
 <body>
 <div id="escena">
   <div class="objetivo"></div>
-
   <div id="grande" class="engranaje"><div class="marca"></div></div>
   <div id="mediano" class="engranaje"><div class="marca"></div></div>
   <div id="pequeno" class="engranaje"><div class="marca"></div></div>
-
   <div class="nucleo"></div>
   <div id="abierto"><span>🔑</span></div>
 </div>
 <div id="destello"></div>
-
 <script>
-const escena = document.getElementById('escena');
-const ruedas = [
-  { el: document.getElementById('grande'), pasos: 16, posicion: 5, objetivo: 0 },
-  { el: document.getElementById('mediano'), pasos: 12, posicion: 8, objetivo: 0 },
-  { el: document.getElementById('pequeno'), pasos: 8, posicion: 3, objetivo: 0 }
+const escena=document.getElementById('escena');
+const ruedas=[
+  {el:document.getElementById('grande'),pasos:16,posicion:5,objetivo:0},
+  {el:document.getElementById('mediano'),pasos:12,posicion:8,objetivo:0},
+  {el:document.getElementById('pequeno'),pasos:8,posicion:3,objetivo:0}
 ];
-let abierto = false;
-
-function pintarRueda(rueda) {
-  const angulo = 360 / rueda.pasos;
-  rueda.el.style.setProperty('--rot', `${rueda.posicion * angulo}deg`);
-  const encaja = ((rueda.posicion % rueda.pasos) + rueda.pasos) % rueda.pasos === rueda.objetivo;
-  rueda.el.classList.toggle('encajado', encaja);
+let abierto=false;
+function normalizar(valor,pasos){return((valor%pasos)+pasos)%pasos}
+function pintarRueda(rueda){
+  const angulo=360/rueda.pasos;
+  rueda.el.style.setProperty('--rot',`${rueda.posicion*angulo}deg`);
+  rueda.el.classList.toggle('encajado',normalizar(rueda.posicion,rueda.pasos)===rueda.objetivo);
 }
-
-function comprobar() {
-  const correcto = ruedas.every(r => ((r.posicion % r.pasos) + r.pasos) % r.pasos === r.objetivo);
-  if (correcto && !abierto) {
-    abierto = true;
+function comprobar(){
+  const correcto=ruedas.every(r=>normalizar(r.posicion,r.pasos)===r.objetivo);
+  if(correcto&&!abierto){
+    abierto=true;
     escena.classList.add('abriendo');
-    if (navigator.vibrate) navigator.vibrate([45, 30, 90]);
+    document.getElementById('destello').animate([{opacity:0},{opacity:.9},{opacity:0}],{duration:580});
+    if(navigator.vibrate)navigator.vibrate([45,30,90]);
   }
 }
-
-ruedas.forEach((rueda, indice) => {
+function girarSegunLado(evento,rueda){
+  if(abierto)return;
+  const rect=rueda.el.getBoundingClientRect();
+  const centroX=rect.left+rect.width/2;
+  const direccion=evento.clientX<centroX?-1:1;
+  rueda.posicion+=direccion;
   pintarRueda(rueda);
-  rueda.el.addEventListener('click', () => {
-    if (abierto) return;
-    rueda.posicion += indice === 1 ? -1 : 1;
-    pintarRueda(rueda);
-    comprobar();
+  comprobar();
+}
+ruedas.forEach(rueda=>{
+  pintarRueda(rueda);
+  rueda.el.addEventListener('pointerdown',evento=>{
+    evento.preventDefault();
+    evento.stopPropagation();
+    girarSegunLado(evento,rueda);
   });
 });
 </script>
