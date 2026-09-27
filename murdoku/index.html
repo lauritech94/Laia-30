@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Murdoku de los recuerdos</title>
+<style>
+*{box-sizing:border-box}
+:root{--bg:#f2eee7;--ink:#1f2430;--card:#fff;--accent:#7c5cff;--bad:#e85858;--good:#39a96b}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,sans-serif;padding:18px;min-height:100vh}
+.app{max-width:820px;margin:auto}
+h1{margin:0 0 8px;font-size:34px}.intro{margin:0 0 18px;color:#5b6070;line-height:1.45}
+.layout{display:grid;grid-template-columns:1fr 1.05fr;gap:16px}.panel{background:var(--card);border-radius:20px;padding:16px;box-shadow:0 8px 26px #00000018}
+.reglas{font-size:14px;line-height:1.45;background:#f7f4ff;border-left:5px solid var(--accent);padding:12px;border-radius:12px;margin-bottom:12px}
+.pistas{display:grid;gap:9px}.pista{padding:10px 12px;background:#f3f4f7;border-radius:11px;font-size:14px;line-height:1.35}
+.personajes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.personaje{border:2px solid #dfe2e9;background:#fff;border-radius:12px;padding:9px 5px;font-size:25px;cursor:pointer}.personaje span{display:block;font-size:11px;margin-top:4px;font-weight:bold}.personaje.sel{border-color:var(--accent);background:#eeeaff;transform:translateY(-2px)}
+.tablero{position:relative;display:grid;grid-template-columns:repeat(6,1fr);aspect-ratio:1;border:4px solid #222;border-radius:8px;overflow:hidden;background:#e9ebef}
+.celda{position:relative;border:1px solid #aeb4bf;background:#f7f8fa;display:grid;place-items:center;font-size:25px;cursor:pointer;min-width:0}
+.celda:nth-child(-n+12){background:#e9f2ff}.celda:nth-child(n+13):nth-child(-n+24){background:#f4eaff}.celda:nth-child(n+25){background:#fff0df}
+.celda.ocupada{background:#fff8bd}.fijo{font-size:21px;opacity:.78;pointer-events:none}.victima{background:#ffc9c9!important;border:3px solid #c73939}.victima:after{content:'VÍCTIMA';font-size:7px;position:absolute;bottom:2px;font-weight:bold}
+.fila,.col{position:absolute;font-size:9px;color:#747b88;pointer-events:none}.fila{left:2px;top:2px}.col{right:2px;top:2px}
+.acciones{display:flex;gap:9px;margin-top:13px}.acciones button{flex:1;border:0;border-radius:12px;padding:13px;font-weight:bold;cursor:pointer}.comprobar{background:#202432;color:#fff}.limpiar{background:#e8eaf0;color:#222}
+#resultado{margin-top:12px;padding:13px;border-radius:12px;display:none;font-weight:bold;line-height:1.4}.ok{background:#dff6e8;color:#17683c}.ko{background:#ffe2e2;color:#8d2929}
+@media(max-width:700px){.layout{grid-template-columns:1fr}.tablero{font-size:20px}.personaje{font-size:22px}}
+</style>
+</head>
+<body>
+<main class="app">
+<h1>MURDOKU</h1>
+<p class="intro">Coloca a los seis sospechosos en el edificio y descubre quién estaba a solas con la víctima.</p>
+<div class="layout">
+<section class="panel">
+<div class="reglas"><strong>Reglas:</strong> coloca una persona por fila y una por columna. “Al lado” incluye horizontal, vertical y diagonal. Los objetos del mapa no se pueden ocupar.</div>
+<div class="pistas">
+ <div class="pista">🌿 Ada estaba en la fila superior, al lado de la planta.</div>
+ <div class="pista">🎹 Bruno estaba al lado del piano.</div>
+ <div class="pista">🪑 Cora estaba inmediatamente a la izquierda de la mesa.</div>
+ <div class="pista">📦 Dani estaba al lado de las cajas, pero no a su izquierda.</div>
+ <div class="pista">🪑 Emma estaba inmediatamente debajo de la silla del estudio.</div>
+ <div class="pista">🔴 Félix estaba a solas con la víctima, dentro del área roja.</div>
+</div>
+<div class="personajes" id="personajes"></div>
+</section>
+<section class="panel">
+<div id="tablero" class="tablero"></div>
+<div class="acciones"><button class="limpiar" id="limpiar">Limpiar</button><button class="comprobar" id="comprobar">Comprobar</button></div>
+<div id="resultado"></div>
+</section>
+</div>
+</main>
+<script>
+const personas=[['A','🧑‍🎨','Ada'],['B','🧑‍🔧','Bruno'],['C','🧑‍🚀','Cora'],['D','🕵️','Dani'],['E','🧙','Emma'],['F','🥷','Félix']];
+const solucion={A:1,B:10,C:12,D:23,E:26,F:33};
+const objetos={0:'🌿',11:'🎹',13:'🪑',22:'📦',20:'🪑',34:'💀'};
+let seleccion=null,puestos={};
+const pCont=document.getElementById('personajes'),tablero=document.getElementById('tablero');
+personas.forEach(([id,icono,nombre])=>{const b=document.createElement('button');b.className='personaje';b.dataset.id=id;b.innerHTML=`${icono}<span>${nombre}</span>`;b.onclick=()=>{seleccion=id;document.querySelectorAll('.personaje').forEach(x=>x.classList.toggle('sel',x.dataset.id===id))};pCont.appendChild(b)});
+for(let i=0;i<36;i++){const c=document.createElement('button');c.className='celda';c.dataset.i=i;c.innerHTML=`<span class="fila">${Math.floor(i/6)+1}</span><span class="col">${i%6+1}</span>`;if(objetos[i]){c.disabled=true;c.classList.add('fijo');if(i===34)c.classList.add('victima');c.innerHTML+=objetos[i]}else c.onclick=()=>colocar(i);tablero.appendChild(c)}
+function colocar(i){if(!seleccion)return;for(const k in puestos)if(puestos[k]===i)delete puestos[k];puestos[seleccion]=i;render()}
+function render(){document.querySelectorAll('.celda').forEach(c=>{c.classList.remove('ocupada');c.querySelectorAll('.token').forEach(t=>t.remove())});for(const id in puestos){const c=tablero.children[puestos[id]],p=personas.find(x=>x[0]===id);c.classList.add('ocupada');const s=document.createElement('span');s.className='token';s.textContent=p[1];c.appendChild(s)}}
+document.getElementById('limpiar').onclick=()=>{puestos={};render();document.getElementById('resultado').style.display='none'};
+document.getElementById('comprobar').onclick=()=>{const r=document.getElementById('resultado');r.style.display='block';const completos=Object.keys(puestos).length===6;const filas=new Set(Object.values(puestos).map(i=>Math.floor(i/6)));const cols=new Set(Object.values(puestos).map(i=>i%6));const exacto=completos&&Object.keys(solucion).every(k=>puestos[k]===solucion[k]);if(exacto){r.className='ok';r.innerHTML='✅ Murdoku resuelto. Félix estaba a solas con la víctima.'}else if(!completos||filas.size<6||cols.size<6){r.className='ko';r.textContent='Todavía falta alguien o se repite una fila o columna.'}else{r.className='ko';r.textContent='La distribución cumple filas y columnas, pero alguna pista no encaja.'}};
+</script>
+</body>
+</html>
