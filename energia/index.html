@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Esfera de Energía</title>
+<title>Esfera</title>
 
 <style>
 
@@ -14,231 +14,281 @@
 
 bo*y{
     margin:0;
-    min-height:10*vh;
-    background:#101827;
+    background:#0*172a;
+    min-height:100vh;
     di*play:flex;
     justify-content:cen*er;
     align-items:center;
-    fo*t-family:Arial,sans-serif;
-    col*r:white;
+    ov*rflow:hidden;
 }
 
-.card{
-    text-align:*enter;
-    width:100%;
-    max-wid*h:450px;
-    padding:20px;
+.contenedor{
+    *osition:relative;
+    width:300px;*    height:300px;
 }
 
-.esf*ra{
+.esfera{
 
-    width:220px;
-    height:2*0px;
+   *width:220px;
+    height:220px;
 
-    border-radius:50%;
-    m*rgin:auto;
+  * border-radius:50%;
+
+    position:*bsolute;
+
+    top:40px;
+    left:4*px;
 
     background:
-    ra*ial-gradient(circle at 30% 30%,
-  * #f5f5f5,
-    #777,
-    #333);
+    radial-gr*dient(
+        circle at 30% 30%,
+*       #ffffff,
+        #9a9a9a,
+ *      #444444
+    );
 
-  * transition:all .15s ease;
+    transiti*n:.08s linear;
 
-    bo*-shadow:
-    0 0 10px rgba(255,255*255,.2);
+    box-shadow:
+  * 0 0 10px rgba(255,255,255,.2);
 
-    touch-action:none;
-}*
-.barra{
-    width:100%;
-    heigh*:18px;
-    background:#222;
-    bo*der-radius:999px;
-    overflow:hid*en;
-    margin-top:25px;
+ *  touch-action:none;
+
+    z-index:*;
 }
 
-.progr*so{
-    width:0%;
-    height:100%;*    border-radius:999px;
-    trans*tion:.05s;
+.fragmento{
 
-    background:
-    li*ear-gradient(
-    90deg,
-    #7a5c*f,
-    #00d4ff,
-    #ffe66d
-    );*}
+    position:abs*lute;
 
-#porcentaje{
-    margin-top:15p*;
-    font-size:22px;
-    font-wei*ht:bold;
-}
-
-#recompensa{
-
-    disp*ay:none;
-
-    margin-top:35px;
-
-  * padding:20px;
-
-    border-radius:*0px;
+    width:40px;
+    height:*0px;
 
     background:white;
 
-    c*lor:#111;
+    o*acity:0;
+
+    border-radius:4px;
+
+*   pointer-events:none;
 }
 
-.explosion{
-    anima*ion:boom .45s ease forwards;
+#conten*do{
+
+    opacity:0;
+
+    width:220*x;
+    height:220px;
+
+    position*absolute;
+
+    left:40px;
+    top:*0px;
+
+    border-radius:20px;
+
+   *background:white;
+
+    display:fle*;
+    justify-content:center;
+    *lign-items:center;
+
+    font-size:*0px;
+
+    transition:.8s;
+
+    tra*sform:scale(.6);
+
 }
 
-@k*yframes boom{
-
-    0%{
-        tra*sform:scale(1);
-    }
-
-    30%{
-  *     transform:scale(1.25);
-    }
-*    100%{
-        opacity:0;
-     *  transform:scale(2);
-    }
-
-}
-
-</*tyle>
-</head>
+</style>
+</he*d>
 
 <body>
 
-<div class=*card">
+<div class="contenedor*>
 
-    <div id="esfera" class*"esfera"></div>
-
-    <div class="b*rra">
-        <div id="progreso" c*ass="progreso"></div>
+    <div id="contenido">
+      * 🔑
     </div>
 
-*   <div id="porcentaje">0%</div>
-
-*   <div id="recompensa">
-        <*2>✨ CONTENIDO RECUPERADO ✨</h2>
-
- *      <p>
-            Aquí aparece*á una foto,
-            una pista * un regalo.
-        </p>
-    </div*
+    <div id="esfer*" class="esfera"></div>
 
 </div>
 
-<script>
+<*cript>
 
-let energia = *;
-let pulsando = false;
-let comple*ado = false;
-
+let energia = 0;
+let pulsa*do = false;
+let explotada = false;*
 const esfera =
-docum*nt.getElementById("esfera");
+document.getElemen*ById("esfera");
 
-cons* barra =
-document.getElementById("*rogreso");
+const contenido =*document.getElementById("contenido*);
 
-const porcentaje =
-doc*ment.getElementById("porcentaje");*
-const recompensa =
-document.getEl*mentById("recompensa");
-
-function *ctualizar(){
-
-    barra.style.widt* =
-        energia + "%";
-
-    por*entaje.innerHTML =
-        Math.fl*or(energia) + "%";
-
-    const bril*o =
-        energia * 0.8;
-
-    es*era.style.boxShadow =
-    `
-    0 * ${brillo}px rgba(255,230,109,0.9)*    `;
-
-    esfera.style.backgroun* =
-    `
-    radial-gradient(
-    *   circle at 30% 30%,
-        rgb(*55,255,255),
-        rgb(${120+ene*gia},
-            ${120+energia/2}*
-            90),
-        rgb(40,4*,40)
-    )
-    `;
-}
-
-setInterval((*=>{
-
-    if(completado) return;
-
- *  if(pulsando){
-
-        energia +* 0.8;
-
-    }else{
-
-        energia*-= 0.5;
-
-    }
-
-    if(energia < 0* energia = 0;
-    if(energia > 100* energia = 100;
-
-    actualizar();*
-    if(energia >= 100){
-
-        *ompletado = true;
-
-        esfera.*lassList.add("explosion");
-
-      * setTimeout(()=>{
-
-            esf*ra.style.display = "none";
-
-      *     recompensa.style.display = "b*ock";
-
-        },450);
-
-    }
-
-},20);
-
+const contenedor =
+document.querySelector(".contenedor");
 
 esfera.addEventListener(
 "pointerdown",
 ()=>{
-    pulsando=true;
+
+    pulsando = true;
+
 });
 
 window.addEventListener(
 "pointerup",
 ()=>{
-    pulsando=false;
+
+    pulsando = false;
+
 });
 
-window.addEventListener(
-"pointercancel",
-()=>{
-    pulsando=false;
-});
+function crearExplosion(){
+
+    for(let i=0;i<25;i++){
+
+        const f =
+        document.createElement("div");
+
+        f.className =
+        "fragmento";
+
+        f.style.left =
+        "130px";
+
+        f.style.top =
+        "130px";
+
+        contenedor.appendChild(f);
+
+        const angulo =
+        Math.random()*360;
+
+        const distancia =
+        80 + Math.random()*120;
+
+        const x =
+        Math.cos(
+            angulo*Math.PI/180
+        ) * distancia;
+
+        const y =
+        Math.sin(
+            angulo*Math.PI/180
+        ) * distancia;*
+        f.animate(
+
+        [
+            {
+                opacity:1,
+                transform:
+                "translate(0,0) rotate(0*eg)"
+            },
+
+            {*                opacity:0,
+       *        transform:
+               *`translate(${x}px,${y}px)
+        *        rotate(720deg)`
+          * }
+
+        ],
+
+        {
+        *   duration:900,
+            easin*:"ease-out"
+        });
+
+    }
+
+}
+*setInterval(()=>{
+
+    if(explotad*) return;
+
+    if(pulsando){
+
+    *   energia += 0.6;
+
+    }else{
+
+  *     energia -= 0.4;
+
+    }
+
+    i*(energia < 0)
+        energia = 0;*
+    if(energia > 100)
+        ene*gia = 100;
+
+    const escala =
+   *1 + energia/500;
+
+    const brillo*=
+    energia * 1.5;
+
+    esfera.s*yle.transform =
+    `scale(${escal*})`;
+
+    esfera.style.boxShadow =*    `
+    0 0 ${brillo}px
+    rgba(255,220,120,.9)
+    `;
+
+    esfera.style.background =
+    `
+    radial-gradient(
+        circle at 30% 30%,
+        white,
+        rgb(${100+energia},
+            ${100+energia/2},
+            120),
+        rgb(${60+energia/5},
+            ${60+energia/6},
+            80)
+    )
+    `;
+
+    if(energia >= 100){
+
+        explotada = true;
+
+        crearExplosion();
+
+        esfera.animate(
+
+        [
+            {
+                transform:"scale(1.2)"
+            },
+            {
+                transform:"scale(1.4)"
+            },
+            {
+                opacity:0
+            }
+
+        ],
+
+        {
+            duration:400,
+            fill:"forwards"
+        });
+
+        setTimeout(()=>{
+
+            contenido.style.opacity =
+            1;
+
+            contenido.style.transform =
+            "scale(1)";
+
+        },300);
+
+    }
+
+},20);
 
 </script>
 
