@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Constelación</title>
+<style>
+*{box-sizing:border-box}
+html,body{
+  margin:0;
+  width:100%;
+  min-height:100%;
+  overflow:hidden;
+  background:radial-gradient(circle at 50% 42%,#192b50 0%,#08101f 72%,#03060d 100%);
+  touch-action:none;
+}
+body{min-height:100vh;display:grid;place-items:center;padding:16px}
+#juego{
+  position:relative;
+  width:min(94vw,420px);
+  aspect-ratio:1;
+  border-radius:28px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 18% 20%,#ffffffcc 0 1px,transparent 2px),
+    radial-gradient(circle at 72% 18%,#ffffff99 0 1px,transparent 2px),
+    radial-gradient(circle at 84% 72%,#ffffffaa 0 1px,transparent 2px),
+    radial-gradient(circle at 28% 82%,#ffffff88 0 1px,transparent 2px),
+    linear-gradient(145deg,#0f1c36,#071020);
+  background-size:53px 47px,71px 59px,89px 83px,97px 67px,auto;
+  box-shadow:0 20px 65px #000b,0 0 0 5px #ffffff0c;
+}
+#canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:2;
+  pointer-events:none;
+}
+.nodo{
+  position:absolute;
+  width:34px;
+  height:34px;
+  transform:translate(-50%,-50%);
+  border:0;
+  border-radius:50%;
+  padding:0;
+  cursor:pointer;
+  touch-action:none;
+  z-index:5;
+  background:radial-gradient(circle at 35% 30%,#fff 0 12%,#b8e8ff 22%,#5ab8ff 52%,#3848b8 100%);
+  box-shadow:0 0 12px #76d5ff,0 0 27px #4878ff99;
+  transition:transform .16s,filter .2s,opacity .5s;
+  -webkit-tap-highlight-color:transparent;
+}
+.nodo::after{
+  content:"";
+  position:absolute;
+  inset:-13px;
+  border-radius:50%;
+  border:1px solid #8ee8ff55;
+}
+.nodo.activo{
+  transform:translate(-50%,-50%) scale(1.25);
+  filter:brightness(1.35);
+  background:radial-gradient(circle at 35% 30%,#fff 0 16%,#fff59e 28%,#ffc83d 60%,#ff8a25 100%);
+  box-shadow:0 0 18px #ffe66d,0 0 44px #ff9f43bb;
+}
+.nodo.error{animation:error .36s ease}
+#revelado{
+  position:absolute;
+  inset:13%;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  opacity:0;
+  transform:scale(.35);
+  pointer-events:none;
+  z-index:20;
+  background:radial-gradient(circle at 35% 28%,#fff,#ffe66d 20%,#ff9f43 55%,#7c3aed 100%);
+  box-shadow:0 0 40px #ffe66d,0 0 100px #8b5cf6aa;
+}
+#revelado span{font-size:82px}
+#flash{position:fixed;inset:0;background:white;opacity:0;pointer-events:none;z-index:99}
+.resuelto .nodo{animation:apagar .6s ease forwards}
+.resuelto #canvas{animation:apagar .6s ease forwards}
+.resuelto #revelado{animation:revelar .85s .2s cubic-bezier(.2,.9,.2,1) forwards}
+@keyframes error{0%,100%{transform:translate(-50%,-50%)}30%{transform:translate(calc(-50% - 7px),-50%)}65%{transform:translate(calc(-50% + 7px),-50%)}}
+@keyframes apagar{to{opacity:0;transform:translate(-50%,-50%) scale(1.5)}}
+@keyframes revelar{0%{opacity:0;transform:scale(.35)}65%{opacity:1;transform:scale(1.12)}100%{opacity:1;transform:scale(1)}}
+</style>
+</head>
+<body>
+<div id="juego">
+  <canvas id="canvas"></canvas>
+  <div id="revelado"><span>🔑</span></div>
+</div>
+<div id="flash"></div>
+<script>
+const juego=document.getElementById('juego');
+const canvas=document.getElementById('canvas');
+const ctx=canvas.getContext('2d');
+
+const puntos=[
+  {x:18,y:72},
+  {x:28,y:35},
+  {x:49,y:18},
+  {x:72,y:31},
+  {x:82,y:61},
+  {x:62,y:82},
+  {x:38,y:75},
+  {x:47,y:49}
+];
+
+/* Orden correcto de conexión. */
+const solucion=[0,1,2,3,4,5,6,7,0];
+let camino=[];
+let terminado=false;
+let arrastrando=false;
+let puntero={x:0,y:0};
+const nodos=[];
+
+function ajustar(){
+  const r=canvas.getBoundingClientRect();
+  const escala=window.devicePixelRatio||1;
+  canvas.width=Math.round(r.width*escala);
+  canvas.height=Math.round(r.height*escala);
+  ctx.setTransform(escala,0,0,escala,0,0);
+  dibujar();
+}
+
+function crearNodos(){
+  puntos.forEach((p,i)=>{
+    const n=document.createElement('button');
+    n.className='nodo';
+    n.style.left=p.x+'%';
+    n.style.top=p.y+'%';
+    n.dataset.i=i;
+    n.addEventListener('pointerdown',e=>iniciar(e,i));
+    n.addEventListener('pointerenter',()=>entrar(i));
+    juego.appendChild(n);
+    nodos.push(n);
+  });
+}
+
+function coordenada(i){
+  const r=canvas.getBoundingClientRect();
+  return{x:puntos[i].x*r.width/100,y:puntos[i].y*r.height/100};
+}
+
+function iniciar(e,i){
+  if(terminado)return;
+  e.preventDefault();
+  arrastrando=true;
+  camino=[];
+  limpiar();
+  intentar(i);
+  mover(e);
+  juego.setPointerCapture?.(e.pointerId);
+}
+
+function mover(e){
+  if(!arrastrando||terminado)return;
+  const r=canvas.getBoundingClientRect();
+  puntero={x:e.clientX-r.left,y:e.clientY-r.top};
+  for(let i=0;i<puntos.length;i++){
+    const p=coordenada(i);
+    if(Math.hypot(puntero.x-p.x,puntero.y-p.y)<31)entrar(i);
+  }
+  dibujar();
+}
+
+function entrar(i){
+  if(!arrastrando||terminado)return;
+  if(camino[camino.length-1]===i)return;
+  intentar(i);
+}
+
+function intentar(i){
+  const esperado=solucion[camino.length];
+  if(i===esperado){
+    camino.push(i);
+    nodos[i].classList.add('activo');
+    if(navigator.vibrate)navigator.vibrate(16);
+    dibujar();
+    if(camino.length===solucion.length)resolver();
+  }else{
+    nodos[i].classList.remove('error');
+    void nodos[i].offsetWidth;
+    nodos[i].classList.add('error');
+    camino=[];
+    limpiar();
+    dibujar();
+    if(navigator.vibrate)navigator.vibrate([35,25,35]);
+  }
+}
+
+function limpiar(){nodos.forEach(n=>n.classList.remove('activo'))}
+
+function dibujar(){
+  const r=canvas.getBoundingClientRect();
+  ctx.clearRect(0,0,r.width,r.height);
+  if(!camino.length)return;
+
+  ctx.lineCap='round';
+  ctx.lineJoin='round';
+  ctx.strokeStyle='#ffe66d';
+  ctx.lineWidth=7;
+  ctx.shadowColor='#ffb703';
+  ctx.shadowBlur=18;
+  ctx.beginPath();
+  const inicio=coordenada(camino[0]);
+  ctx.moveTo(inicio.x,inicio.y);
+  for(let j=1;j<camino.length;j++){
+    const p=coordenada(camino[j]);
+    ctx.lineTo(p.x,p.y);
+  }
+  if(arrastrando&&camino.length<solucion.length)ctx.lineTo(puntero.x,puntero.y);
+  ctx.stroke();
+  ctx.shadowBlur=0;
+}
+
+function terminarArrastre(){
+  if(terminado)return;
+  arrastrando=false;
+  if(camino.length!==solucion.length){
+    camino=[];
+    limpiar();
+    dibujar();
+  }
+}
+
+function resolver(){
+  terminado=true;
+  arrastrando=false;
+  juego.classList.add('resuelto');
+  document.getElementById('flash').animate(
+    [{opacity:0},{opacity:.9},{opacity:0}],
+    {duration:560}
+  );
+  if(navigator.vibrate)navigator.vibrate([45,30,100]);
+}
+
+gameMove=e=>mover(e);
+juego.addEventListener('pointermove',gameMove);
+window.addEventListener('pointerup',terminarArrastre);
+window.addEventListener('pointercancel',terminarArrastre);
+window.addEventListener('resize',ajustar);
+crearNodos();
+ajustar();
+</script>
+</body>
+</html>
