@@ -3,265 +3,261 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Velas</title>
+<title>Velas V2</title>
 
 <style>
-
 *{
     box-sizing:border-box;
+    m*rgin:0;
+    padding:0;
 }
 
-html,body{
-    margin:0;
+html,bod*{
     width:100%;
-    height:100%;
-    overflow:hidden;
+    height:100%;*    overflow:hidden;
 }
 
 body{
-
-    background:
-    radial-gradient(
-        circle,
-        #1a2338,
-        #090d18
-    );
-
+    *ackground:radial-gradient(circle,#*f2840,#090d18);
 }
 
 #juego{
-
-    position:relative;
-
+    pos*tion:relative;
     width:100vw;
-    height:100vh;
+  * height:100vh;
 }
 
 .vela{
-
-    position:absolute;
-
-    width:46px;
-    height:90px;
-
-    transform:
-    translate(-50%,-50%);
+    posit*on:absolute;
+    width:60px;
+    h*ight:100px;
+    transform:translat*(-50%,-50%);
 }
 
 .cera{
-
-    position:absolute;
-
+    positio*:absolute;
     bottom:0;
-
-    width:46px;
-    height:70px;
-
-    border-radius:10px;
-
-    background:
-    linear-gradient(
-        #f6f4ea,
-        #ddd6b8
-    );
+    width*60px;
+    height:80px;
+    border-*adius:10px;
+    background:linear-*radient(#faf8f0,#d9d0b4);
 }
 
-.llama{
-
+.llam*{
     position:absolute;
+    left:*0%;
+    top:-28px;
 
-    left:50%;
-    top:-25px;
+    width:28px*
+    height:40px;
 
-    width:22px;
-    height:32px;
-
-    transform:
-    translateX(-50%);
-
-    border-radius:
-    50% 50% 50% 50%;
+    transform:t*anslateX(-50%);
 
     background:
-    radial-gradient(
-        circle at 40% 30%,
-        #fff,
-        #ffe66d 35%,
-        #ff9f43 70%,
-        #ff6b00
+ *  radial-gradient(
+        circle *t 50% 30%,
+        white,
+        *ffe66d 30%,
+        #ff9f43 60%,
+ *      #ff6b00
     );
 
-    box-shadow:
-    0 0 12px #ffe66d,
-    0 0 30px #ff9f43;
+    border-r*dius:50% 50% 60% 60%;
 
-    display:none;
+    display*none;
+
+    box-shadow:
+        0 0*15px #ffe66d,
+        0 0 40px #ff*f43;
 }
 
 .encendida .llama{
-    display:block;
+    dis*lay:block;
 }
 
-#cable{
-
-    position:absolute;
-    inset:0;
-
-    pointer-events:none;
+#linea{
+    position*absolute;
+    left:0;
+    top:0;
+ *  width:100%;
+    height:100%;
+   *pointer-events:none;
 }
 
-#final{
-
-    position:absolute;
-
-    inset:0;
+#victoria{*    position:absolute;
+    inset:0*
 
     display:flex;
-
-    justify-content:center;
-    align-items:center;
+    justify-co*tent:center;
+    align-items:cente*;
 
     opacity:0;
-
-    transition:.7s;
+    transition:.*s;
 
     pointer-events:none;
 }
 
-#final.mostrar{
-
+#v*ctoria.mostrar{
     opacity:1;
 }
 
-#orb{
-
+*orb{
     width:140px;
-    height:140px;
+    height:1*0px;
 
     border-radius:50%;
 
-    background:
+    *ackground:
     radial-gradient(
-        circle,
+  *     circle,
         white,
-        #ffe66d,
+      * #ffe66d,
         #ff9f43
     );
 
-    box-shadow:
-    0 0 40px #ffe66d,
-    0 0 90px #ff9f43;
-}
-
-</style>
+*   box-shadow:
+        0 0 50px #f*e66d,
+        0 0 100px #ff9f43;
+}*</style>
 </head>
 
 <body>
 
-<div id="juego">
+<div id=*juego">
 
-<svg id="cable"></svg>
+<svg id="linea"></svg>
 
-<div class="vela encendida" style="left:20%;top:70%;"></div>
-
-<div class="vela" style="left:45%;top:25%;"></div>
-
-<div class="vela" style="left:75%;top:30%;"></div>
-
-<div class="vela" style="left:80%;top:65%;"></div>
-
-<div class="vela" style="left:50%;top:80%;"></div>
-
-<div class="vela" style="left:25%;top:40%;"></div>
-
-<div id="final">
-    <div id="orb"></div>
+<*iv class="vela encendida" style="l*ft:20%;top:70%;">
+    <div class="*lama"></div>
+    <div class="cera"*</div>
 </div>
 
+<div class="vela" s*yle="left:40%;top:35%;">
+    <div *lass="llama"></div>
+    <div class*"cera"></div>
 </div>
+
+<div class="*ela" style="left:65%;top:20%;">
+  * <div class="llama"></div>
+    <di* class="cera"></div>
+</div>
+
+<div *lass="vela" style="left:82%;top:40*;">
+    <div class="llama"></div>
+*   <div class="cera"></div>
+</div>*
+<div class="vela" style="left:78%*top:75%;">
+    <div class="llama">*/div>
+    <div class="cera"></div>*</div>
+
+<div class="vela" style="l*ft:45%;top:82%;">
+    <div class="*lama"></div>
+    <div class="cera"*</div>
+</div>
+
+<div id="victoria">*    <div id="orb"></div>
+</div>
+
+<*div>
 
 <script>
 
-const velas =
-document.querySelectorAll(".vela");
+const velas=docume*t.querySelectorAll('.vela');
+const*svg=document.getElementById('linea*);
+const victoria=document.getElem*ntById('victoria');
 
-const svg =
-document.getElementById("cable");
+let arrastran*o=false;
+let origen=null;
 
-const final =
-document.getElementById("final");
+functio* centro(el){
 
-velas.forEach(v=>{
+    const r=el.getBo*ndingClientRect();
 
-    v.innerHTML=
-    `
-    <div class="llama"></div>
-    <div class="cera"></div>
-    `;
+    return {
+ *      x:r.left+r.width/2,
+        *:r.top+5
+    };
+}
+
+document.addEve*tListener('pointerdown',e=>{
+
+    *onst vela=e.target.closest('.vela'*;
+
+    if(vela && vela.classList.c*ntains('encendida')){
+
+        arr*strando=true;
+        origen=vela;*    }
 
 });
 
-let arrastrando = false;
+document.addEventListe*er('pointerup',()=>{
 
-let origen = null;
+    arrastra*do=false;
+    svg.innerHTML='';
+})*
 
-function centro(el){
+document.addEventListener('point*rmove',e=>{
 
-    const r =
-    el.getBoundingClientRect();
+    if(!arrastrando |* !origen) return;
 
-    return{
+    const p=cen*ro(origen);
 
-        x:r.left+r.width/2,
+    svg.innerHTML=
+  * `<line
+        x1="${p.x}"
+      * y1="${p.y}"
+        x2="${e.clien*X}"
+        y2="${e.clientY}"
+    *   stroke="#ffe66d"
+        stroke-width="6"
+        stroke-linecap="round"
+    />`;
 
-        y:r.top+r.height/2-35
+    velas.forEach(v=>{
 
-    };
+        if(v.classList.contains('encendida')) return;
+
+        const c=centro(v);
+
+        const d=Math.hypot(
+            e.clientX-c.x,
+            e.clientY-c.y
+        );
+
+        if(d<45){
+
+            v.classList.add('encendida');
+
+            if(navigator.vibrate){
+                navigator.vibrate(20);
+            }
+
+            comprobar();
+        }
+
+    });
+
+});
+
+function comprobar(){
+
+    const total=velas.length;
+
+    const encendidas=
+    document.querySelectorAll(
+        '.vela.encendida'
+    ).length;
+
+    if(total===encendidas){
+
+        victoria.classList.add(
+            'mostrar'
+        );
+    }
 
 }
 
-document.addEventListener(
-"pointerdown",
-e=>{
+</script>
 
-    const vela =
-    e.target.closest(".vela");
-
-    if(
-        vela &&
-        vela.classList.contains(
-        "encendida"
-        )
-    ){
-
-        arrastrando=true;
-
-        origen=vela;
-
-    }
-
-});
-
-document.addEventListener(
-"pointerup",
-()=>{
-
-    arrastrando=false;
-
-    svg.innerHTML="";
-
-});
-
-document.addEventListener(
-"pointermove",
-e=>{
-
-    if(!arrastrando)
-        return;
-
-    const a =
-    centro(origen);
-
-    svg.innerHTML=
-    `
+</body>
+</html>
