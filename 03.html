@@ -1,969 +1,534 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="ca">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nonograma 10×10</title>
+<title>Composició bloquejada</title>
 
 <style>
-
 :root{
-    --color:#ffd84d;
-    --color2:#ff9f43;
-    --dark:#25263a;
-    --soft:#fff7d6;
-    --line:#cfd1dc;
-    --cell:#f7f7fa;
+  --color:#ffd84d;
+  --color2:#ff9f43;
+  --dark:#25263a;
+  --soft:#fff7d6;
+  --line:#cfd1dc;
+  --cell:#f7f7fa;
 }
 
 *{
-    box-sizing:border-box
+  box-sizing:border-box;
+}
+
+html,
+body{
+  margin:0;
+  min-height:100%;
 }
 
 body{
-    margin:0;
-    min-height:100vh;
-    padding:20px;
-    font-family:Arial,sans-serif;
-    color:var(--dark);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:
-        radial-gradient(
-            circle at 15% 15%,
-            rgba(255,255,255,.75),
-            transparent 25%
-        ),
-        linear-gradient(
-            135deg,
-            var(--soft),
-            #eee9ff
-        );
+  min-height:100vh;
+  padding:20px;
+  font-family:Arial,sans-serif;
+  color:var(--dark);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:
+    radial-gradient(circle at 15% 15%,rgba(255,255,255,.75),transparent 25%),
+    linear-gradient(135deg,var(--soft),#eee9ff);
 }
 
 .fondo-bolas{
-    position:fixed;
-    inset:0;
-    overflow:hidden;
-    pointer-events:none;
-    z-index:-1
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:-1;
 }
 
 .bola{
-    position:absolute;
-    border-radius:50%;
-    filter:blur(1px);
-    opacity:.23;
-    box-shadow:
-        inset -8px -10px 15px rgba(0,0,0,.12),
-        inset 7px 7px 12px rgba(255,255,255,.55)
+  position:absolute;
+  border-radius:50%;
+  filter:blur(1px);
+  opacity:.23;
+  box-shadow:
+    inset -8px -10px 15px rgba(0,0,0,.12),
+    inset 7px 7px 12px rgba(255,255,255,.55);
 }
 
 .b1{
-    width:130px;
-    height:130px;
-    background:#ffd93d;
-    top:5%;
-    left:-30px
+  width:130px;
+  height:130px;
+  background:#ffd93d;
+  top:5%;
+  left:-30px;
 }
 
 .b2{
-    width:90px;
-    height:90px;
-    background:#6bcB77;
-    bottom:8%;
-    right:3%
+  width:90px;
+  height:90px;
+  background:#6bcB77;
+  bottom:8%;
+  right:3%;
 }
 
 .b3{
-    width:70px;
-    height:70px;
-    background:#4d96ff;
-    top:18%;
-    right:8%
+  width:70px;
+  height:70px;
+  background:#4d96ff;
+  top:18%;
+  right:8%;
 }
 
 .b4{
-    width:110px;
-    height:110px;
-    background:#ff6b6b;
-    bottom:-20px;
-    left:12%
+  width:110px;
+  height:110px;
+  background:#ff6b6b;
+  bottom:-20px;
+  left:12%;
 }
 
 .tarjeta{
-    width:100%;
-    max-width:700px;
-    background:rgba(255,255,255,.96);
-    border-radius:28px;
-    padding:28px 24px;
-    box-shadow:0 18px 50px rgba(37,38,58,.18);
-    border:1px solid rgba(255,255,255,.8);
-    text-align:center
+  width:100%;
+  max-width:650px;
+  background:rgba(255,255,255,.96);
+  border-radius:28px;
+  padding:26px 22px;
+  box-shadow:0 18px 50px rgba(37,38,58,.18);
+  border:1px solid rgba(255,255,255,.8);
+  text-align:center;
+}
+
+#zonaJuego{
+  transition:opacity .55s ease,transform .55s ease;
 }
 
 h1{
-    font-size:28px;
-    margin:0 0 8px
+  font-size:28px;
+  margin:0 0 8px;
 }
 
 .subtitulo{
-    margin:0 0 20px;
-    color:#707184;
-    font-size:15px
+  margin:0 0 18px;
+  color:#707184;
+  font-size:15px;
 }
 
 .instrucciones{
-    padding:14px 16px;
-    background:
-        linear-gradient(
-            135deg,
-            var(--soft),
-            #fff
-        );
-    border-left:5px solid var(--color);
-    border-radius:16px;
-    text-align:left;
-    font-size:15px;
-    line-height:1.5;
-    margin-bottom:20px
+  padding:14px 16px;
+  background:linear-gradient(135deg,var(--soft),#fff);
+  border-left:5px solid var(--color);
+  border-radius:16px;
+  text-align:left;
+  font-size:15px;
+  line-height:1.5;
+  margin-bottom:18px;
 }
 
 .juego{
-    display:grid;
-    grid-template-columns:82px minmax(0,1fr);
-    grid-template-rows:82px minmax(0,1fr);
-    gap:0;
-    margin:0 auto 18px;
-    width:min(100%,560px);
+  display:grid;
+  grid-template-columns:76px minmax(0,1fr);
+  grid-template-rows:76px minmax(0,1fr);
+  width:min(100%,540px);
+  margin:0 auto;
 }
 
 .esquina{
-    border-right:2px solid var(--dark);
-    border-bottom:2px solid var(--dark);
-    background:#fff
+  border-right:2px solid var(--dark);
+  border-bottom:2px solid var(--dark);
+  background:#fff;
 }
 
 .claves-columnas{
-    display:grid;
-    grid-template-columns:repeat(10,1fr);
-    border-bottom:2px solid var(--dark);
+  display:grid;
+  grid-template-columns:repeat(10,1fr);
+  border-bottom:2px solid var(--dark);
 }
 
 .clave-col{
-    display:flex;
-    align-items:flex-end;
-    justify-content:center;
-    padding:5px 2px;
-    font-weight:800;
-    font-size:12px;
-    line-height:1.05;
-    border-right:1px solid var(--line);
-    white-space:pre-line
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  padding:5px 2px;
+  font-weight:800;
+  font-size:12px;
+  line-height:1.08;
+  border-right:1px solid var(--line);
+  white-space:pre-line;
 }
 
 .claves-filas{
-    display:grid;
-    grid-template-rows:repeat(10,1fr);
-    border-right:2px solid var(--dark);
+  display:grid;
+  grid-template-rows:repeat(10,1fr);
+  border-right:2px solid var(--dark);
 }
 
 .clave-fila{
-    display:flex;
-    align-items:center;
-    justify-content:flex-end;
-    padding:0 8px;
-    font-weight:800;
-    font-size:12px;
-    line-height:1.05;
-    border-bottom:1px solid var(--line);
-    white-space:pre-line
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  padding:0 8px;
+  font-weight:800;
+  font-size:12px;
+  line-height:1.08;
+  border-bottom:1px solid var(--line);
+  white-space:pre-line;
 }
 
 .tablero{
-    display:grid;
-    grid-template-columns:repeat(10,1fr);
-    grid-template-rows:repeat(10,1fr);
-    aspect-ratio:1;
-    border:0
+  display:grid;
+  grid-template-columns:repeat(10,1fr);
+  grid-template-rows:repeat(10,1fr);
+  aspect-ratio:1;
+  border-right:2px solid var(--dark);
+  border-bottom:2px solid var(--dark);
 }
 
 .celda{
-    appearance:none;
-    border:0;
-    border-right:1px solid var(--line);
-    border-bottom:1px solid var(--line);
-    background:var(--cell);
-    cursor:pointer;
-    position:relative;
-    min-width:0;
-    min-height:0
+  appearance:none;
+  -webkit-appearance:none;
+  border:0;
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  background:var(--cell);
+  cursor:pointer;
+  position:relative;
+  min-width:0;
+  min-height:0;
+  padding:0;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
 }
 
 .celda:nth-child(5n){
-    border-right-color:#aeb2c1
+  border-right-color:#aeb2c1;
 }
 
-.celda.bloqueada{
-    background:#25263a
+.celda:nth-child(n+41):nth-child(-n+50){
+  border-bottom-color:#aeb2c1;
 }
 
-.celda.marcada::after{
-    content:"×";
-    position:absolute;
-    inset:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:clamp(14px,3vw,24px);
-    font-weight:900;
-    color:#a7a9b4
+.celda.llena{
+  background:var(--dark);
 }
 
-.celda.bloqueada.marcada::after{
-    color:#fff;
-    opacity:.8
+.celda.cruz::after{
+  content:"×";
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:clamp(14px,3vw,24px);
+  font-weight:900;
+  color:#a7a9b4;
 }
 
-.controles{
-    display:flex;
-    gap:10px;
-    margin-top:12px
-}
-
-button{
-    flex:1;
-    border:0;
-    border-radius:13px;
-    padding:14px;
-    font-weight:800;
-    font-size:15px;
-    cursor:pointer;
-    background:var(--dark);
-    color:white
-}
-
-button.secundario{
-    background:#ececf3;
-    color:var(--dark)
-}
-
-.estado{
-    display:none;
-    margin-top:16px;
-    padding:16px;
-    border-radius:15px;
-    line-height:1.5
-}
-
-.estado.visible{
-    display:block
-}
-
-.correcto{
-    background:#def7e4;
-    color:#155d2b
-}
-
-.incorrecto{
-    background:#ffe0e0;
-    color:#822
+.reiniciar{
+  width:100%;
+  margin-top:16px;
+  border:0;
+  border-radius:13px;
+  padding:13px;
+  font-weight:800;
+  font-size:15px;
+  cursor:pointer;
+  background:#ececf3;
+  color:var(--dark);
 }
 
 .descifrando{
-    display:none;
-    margin-top:16px;
-    padding:18px;
-    border-radius:15px;
-    background:#fff0ad;
-    color:#5c4700;
-    font-weight:800
+  display:none;
+  padding:18px;
+  border-radius:15px;
+  background:#fff0ad;
+  color:#5c4700;
+  font-weight:800;
+  animation:pulso .8s ease-in-out infinite alternate;
 }
 
-
-/* ==========================================
-   FOTO FINAL
-   MISMO EFECTO QUE TU HTML ORIGINAL
-========================================== */
-
 .foto-contenedor{
-    max-height:0;
-    opacity:0;
-    overflow:hidden;
-    transform:translateY(20px);
-
-    transition:
-        max-height 1.8s ease,
-        opacity 1.8s ease,
-        transform 1.8s ease
+  max-height:0;
+  opacity:0;
+  overflow:hidden;
+  transform:translateY(20px) scale(.97);
+  transition:
+    max-height 1.8s ease,
+    opacity 1.8s ease,
+    transform 1.8s ease;
 }
 
 .foto-contenedor.visible{
-    max-height:1000px;
-    opacity:1;
-    transform:translateY(0)
+  max-height:1100px;
+  opacity:1;
+  transform:translateY(0) scale(1);
 }
 
 .foto{
-    width:100%;
-    border-radius:18px;
-    border:4px solid var(--soft);
-    display:block
+  width:100%;
+  height:auto;
+  border-radius:18px;
+  border:4px solid var(--soft);
+  display:block;
+  box-shadow:0 12px 30px rgba(37,38,58,.17);
 }
 
 .record{
-    margin-top:15px;
-    font-size:20px;
-    font-weight:800;
-    color:var(--color2)
+  margin-top:15px;
+  font-size:20px;
+  font-weight:800;
+  color:var(--color2);
 }
 
-
-/* ==========================================
-   MÓVIL
-========================================== */
+@keyframes pulso{
+  from{transform:scale(1);opacity:.78}
+  to{transform:scale(1.02);opacity:1}
+}
 
 @media(max-width:560px){
+  body{
+    padding:10px;
+  }
 
-    body{
-        padding:10px
-    }
+  .tarjeta{
+    padding:20px 12px;
+    border-radius:22px;
+  }
 
-    .tarjeta{
-        padding:20px 12px;
-        border-radius:22px
-    }
+  h1{
+    font-size:24px;
+  }
 
-    h1{
-        font-size:24px
-    }
+  .instrucciones{
+    font-size:14px;
+  }
 
-    .juego{
-        grid-template-columns:62px minmax(0,1fr);
-        grid-template-rows:68px minmax(0,1fr)
-    }
+  .juego{
+    grid-template-columns:58px minmax(0,1fr);
+    grid-template-rows:66px minmax(0,1fr);
+  }
 
-    .clave-fila,
-    .clave-col{
-        font-size:10px;
-        padding:3px
-    }
+  .clave-fila,
+  .clave-col{
+    font-size:10px;
+    padding:3px;
+  }
 
-    .clave-fila{
-        padding-right:5px
-    }
-
-    .controles{
-        flex-direction:column
-    }
+  .clave-fila{
+    padding-right:5px;
+  }
 }
-
 </style>
 </head>
 
-
 <body>
 
-
 <div class="fondo-bolas">
-
-    <span class="bola b1"></span>
-    <span class="bola b2"></span>
-    <span class="bola b3"></span>
-    <span class="bola b4"></span>
-
+  <span class="bola b1"></span>
+  <span class="bola b2"></span>
+  <span class="bola b3"></span>
+  <span class="bola b4"></span>
 </div>
-
 
 <main class="tarjeta">
 
+  <div id="zonaJuego">
 
-    <h1>🌸 Nonograma 10×10</h1>
+    <h1>Composició bloquejada</h1>
 
     <p class="subtitulo">
-        Completa la cuadrícula y descubre la imagen secreta.
+      Completa la quadrícula i descobreix la imatge amagada.
     </p>
 
-
     <section class="instrucciones">
-
-        <strong>Cómo jugar:</strong>
-
-        los números indican cuántas casillas seguidas
-        debes rellenar en cada fila y columna.
-
-        <br>
-
-        Cuando haya varios números, debe existir al menos
-        una casilla vacía entre cada grupo.
-
-        <br>
-
-        Pulsa una casilla para
-        <strong>rellenarla</strong>
-
-        y vuelve a pulsarla para marcarla con
-        <strong>×</strong>.
-
+      <strong>Com es juga:</strong><br>
+      Els números indiquen quantes caselles seguides has de pintar a cada fila i columna.<br>
+      Si hi ha més d'un número, ha d'haver-hi almenys una casella buida entre els grups.<br><br>
+      Toca una casella: <strong>blanc → negre → × → blanc</strong>.
     </section>
 
-
-    <!-- ======================================
-         NONOGRAMA
-    ======================================= -->
-
     <div class="juego" id="juego">
-
-        <div class="esquina"></div>
-
-        <div
-            class="claves-columnas"
-            id="clavesColumnas">
-        </div>
-
-        <div
-            class="claves-filas"
-            id="clavesFilas">
-        </div>
-
-        <div
-            class="tablero"
-            id="tablero">
-        </div>
-
+      <div class="esquina"></div>
+      <div class="claves-columnas" id="clavesColumnas"></div>
+      <div class="claves-filas" id="clavesFilas"></div>
+      <div class="tablero" id="tablero"></div>
     </div>
 
+    <button class="reiniciar" type="button" onclick="reiniciar()">
+      ↺ REINICIAR
+    </button>
 
-    <!-- ======================================
-         BOTONES
-    ======================================= -->
+  </div>
 
-    <div
-        class="controles"
-        id="controles">
+  <div id="desxifrant" class="descifrando">
+    🔮 Desxifrant el record...
+  </div>
 
-        <button
-            class="secundario"
-            onclick="reiniciar()">
+  <div id="fotoContenidor" class="foto-contenedor">
+    <img
+      class="foto"
+      src="universitat.jpg"
+      alt="Record recuperat"
+    >
 
-            ↺ REINICIAR
-
-        </button>
-
-        <button
-            onclick="comprobar()">
-
-            ✓ COMPROBAR
-
-        </button>
-
+    <div class="record">
+      ✨ Record recuperat
     </div>
-
-
-    <div
-        id="estado"
-        class="estado">
-    </div>
-
-
-    <!-- ======================================
-         MENSAJE ANTES DE LA FOTO
-    ======================================= -->
-
-    <div
-        id="descifrando"
-        class="descifrando">
-
-        ✨ Descubriendo la imagen...
-
-    </div>
-
-
-    <!-- ======================================
-         FOTO FINAL
-
-         IMPORTANTE:
-         universitat.jpg debe estar en la
-         misma carpeta que este HTML.
-    ======================================= -->
-
-    <div
-        id="fotoContenedor"
-        class="foto-contenedor">
-
-        <img
-            class="foto"
-            src="universitat.jpg"
-            alt="Imagen descubierta">
-
-        <div class="record">
-
-            🎉 ¡Nonograma completado!
-
-        </div>
-
-    </div>
-
+  </div>
 
 </main>
 
-
 <script>
-
-
-/* ==========================================
-   ESTAS SON LAS PISTAS DE TU CÓDIGO
-   ORIGINAL
-========================================== */
-
 const FILAS = [
-
-    [1, 1],
-
-    [3, 3],
-
-    [10],
-
-    [10],
-
-    [2, 7],
-
-    [2, 7],
-
-    [2, 5],
-
-    [2, 3],
-
-    [4],
-
-    [2]
-
+  [1,1],
+  [3,3],
+  [10],
+  [10],
+  [2,7],
+  [2,7],
+  [2,5],
+  [2,3],
+  [4],
+  [2]
 ];
-
 
 const COLUMNAS = [
-
-    [4],
-
-    [6],
-
-    [4, 2],
-
-    [5, 2],
-
-    [5, 2],
-
-    [8],
-
-    [8],
-
-    [8],
-
-    [6],
-
-    [4]
-
+  [4],
+  [6],
+  [4,2],
+  [5,2],
+  [5,2],
+  [8],
+  [8],
+  [8],
+  [6],
+  [4]
 ];
-
-
-/* ==========================================
-   ESTA ES LA SOLUCIÓN DE TU CÓDIGO
-   ORIGINAL
-========================================== */
 
 const SOLUCION = [
-
-    '0010000100',
-
-    '0111001110',
-
-    '1111111111',
-
-    '1111111111',
-
-    '1101111111',
-
-    '1101111111',
-
-    '0110111110',
-
-    '0011011100',
-
-    '0001111000',
-
-    '0000110000'
-
+  "0010000100",
+  "0111001110",
+  "1111111111",
+  "1111111111",
+  "1101111111",
+  "1101111111",
+  "0110111110",
+  "0011011100",
+  "0001111000",
+  "0000110000"
 ];
 
+const tablero = document.getElementById("tablero");
+const clavesFilas = document.getElementById("clavesFilas");
+const clavesColumnas = document.getElementById("clavesColumnas");
+let completado = false;
 
-const tablero =
-    document.getElementById('tablero');
-
-const clavesFilas =
-    document.getElementById('clavesFilas');
-
-const clavesColumnas =
-    document.getElementById('clavesColumnas');
-
-const estado =
-    document.getElementById('estado');
-
-
-/* ==========================================
-   CONVERTIR PISTA A TEXTO
-========================================== */
-
-function textoClave(nums){
-
-    return nums.join('\n');
-
+function textoClave(numeros){
+  return numeros.join("\n");
 }
 
-
-/* ==========================================
-   CREAR PISTAS DE COLUMNAS
-========================================== */
-
-COLUMNAS.forEach(c => {
-
-    const el =
-        document.createElement('div');
-
-    el.className =
-        'clave-col';
-
-    el.textContent =
-        textoClave(c);
-
-    clavesColumnas.appendChild(el);
-
+COLUMNAS.forEach(columna => {
+  const elemento = document.createElement("div");
+  elemento.className = "clave-col";
+  elemento.textContent = textoClave(columna);
+  clavesColumnas.appendChild(elemento);
 });
 
-
-/* ==========================================
-   CREAR PISTAS DE FILAS
-========================================== */
-
-FILAS.forEach(f => {
-
-    const el =
-        document.createElement('div');
-
-    el.className =
-        'clave-fila';
-
-    el.textContent =
-        textoClave(f);
-
-    clavesFilas.appendChild(el);
-
+FILAS.forEach(fila => {
+  const elemento = document.createElement("div");
+  elemento.className = "clave-fila";
+  elemento.textContent = textoClave(fila);
+  clavesFilas.appendChild(elemento);
 });
 
+for(let fila = 0; fila < 10; fila++){
+  for(let columna = 0; columna < 10; columna++){
+    const celda = document.createElement("button");
+    celda.className = "celda";
+    celda.type = "button";
+    celda.dataset.fila = fila;
+    celda.dataset.columna = columna;
+    celda.dataset.estado = "vacia";
 
-/* ==========================================
-   CREAR LAS 100 CASILLAS
-========================================== */
+    celda.addEventListener("click", () => {
+      if(completado){
+        return;
+      }
 
-for(let r = 0; r < 10; r++){
+      const estado = celda.dataset.estado;
 
-    for(let c = 0; c < 10; c++){
+      if(estado === "vacia"){
+        celda.dataset.estado = "llena";
+        celda.classList.add("llena");
+        celda.classList.remove("cruz");
+      }else if(estado === "llena"){
+        celda.dataset.estado = "cruz";
+        celda.classList.remove("llena");
+        celda.classList.add("cruz");
+      }else{
+        celda.dataset.estado = "vacia";
+        celda.classList.remove("llena","cruz");
+      }
 
-        const celda =
-            document.createElement('button');
+      validarAutomaticamente();
+    });
 
-        celda.className =
-            'celda';
-
-        celda.type =
-            'button';
-
-        celda.dataset.r =
-            r;
-
-        celda.dataset.c =
-            c;
-
-        celda.dataset.estado =
-            'vacia';
-
-
-        celda.addEventListener(
-            'click',
-            () => {
-
-                const actual =
-                    celda.dataset.estado;
-
-
-                /*
-                 * VACÍA → RELLENA
-                 */
-
-                if(actual === 'vacia'){
-
-                    celda.dataset.estado =
-                        'llena';
-
-                    celda.classList.add(
-                        'bloqueada'
-                    );
-
-                    celda.classList.remove(
-                        'marcada'
-                    );
-
-                }
-
-
-                /*
-                 * RELLENA → X
-                 */
-
-                else if(actual === 'llena'){
-
-                    celda.dataset.estado =
-                        'cruz';
-
-                    celda.classList.remove(
-                        'bloqueada'
-                    );
-
-                    celda.classList.add(
-                        'marcada'
-                    );
-
-                }
-
-
-                /*
-                 * X → VACÍA
-                 */
-
-                else{
-
-                    celda.dataset.estado =
-                        'vacia';
-
-                    celda.classList.remove(
-                        'bloqueada',
-                        'marcada'
-                    );
-
-                }
-
-            }
-        );
-
-
-        tablero.appendChild(celda);
-
-    }
-
+    tablero.appendChild(celda);
+  }
 }
 
+function validarAutomaticamente(){
+  const celdas = [...document.querySelectorAll(".celda")];
 
-/* ==========================================
-   COMPROBAR
-========================================== */
+  const correcto = celdas.every(celda => {
+    const fila = Number(celda.dataset.fila);
+    const columna = Number(celda.dataset.columna);
+    const debeEstarLlena = SOLUCION[fila][columna] === "1";
+    const estaLlena = celda.dataset.estado === "llena";
 
-function comprobar(){
+    return estaLlena === debeEstarLlena;
+  });
 
-    let correcto = true;
-
-
-    document
-        .querySelectorAll('.celda')
-        .forEach(c => {
-
-
-            const r =
-                Number(c.dataset.r);
-
-            const col =
-                Number(c.dataset.c);
-
-
-            const marcada =
-                c.dataset.estado === 'llena';
-
-
-            const debeEstarLlena =
-                SOLUCION[r][col] === '1';
-
-
-            if(marcada !== debeEstarLlena){
-
-                correcto = false;
-
-            }
-
-        });
-
-
-    /* ======================================
-       CORRECTO
-    ====================================== */
-
-    if(correcto){
-
-        /*
-         * Mensaje de correcto
-         */
-
-        estado.className =
-            'estado visible correcto';
-
-        estado.innerHTML =
-            '✅ ¡Correcto! Has completado el nonograma.';
-
-
-        /*
-         * Ocultamos el resultado después
-         * para que quede como en tu ejemplo.
-         */
-
-        document.getElementById(
-            'juego'
-        ).style.display = 'none';
-
-
-        document.getElementById(
-            'controles'
-        ).style.display = 'none';
-
-
-        /*
-         * Mostramos "Descubriendo..."
-         */
-
-        document.getElementById(
-            'descifrando'
-        ).style.display = 'block';
-
-
-        /*
-         * Exactamente el mismo concepto
-         * que tu código de carnaval.jpg.
-         */
-
-        setTimeout(() => {
-
-
-            document.getElementById(
-                'descifrando'
-            ).style.display = 'none';
-
-
-            /*
-             * Activamos la animación:
-             *
-             * max-height
-             * opacity
-             * translateY
-             */
-
-            document.getElementById(
-                'fotoContenedor'
-            ).classList.add(
-                'visible'
-            );
-
-
-        },1500);
-
-    }
-
-
-    /* ======================================
-       INCORRECTO
-    ====================================== */
-
-    else{
-
-        estado.className =
-            'estado visible incorrecto';
-
-        estado.innerHTML =
-            '❌ Todavía hay alguna casilla incorrecta. Revisa las pistas y vuelve a intentarlo.';
-
-    }
-
+  if(correcto){
+    completarNonograma();
+  }
 }
 
+function completarNonograma(){
+  if(completado){
+    return;
+  }
 
-/* ==========================================
-   REINICIAR
-========================================== */
+  completado = true;
+
+  document.getElementById("zonaJuego").style.opacity = "0";
+  document.getElementById("zonaJuego").style.transform = "scale(.97)";
+
+  setTimeout(() => {
+    document.getElementById("zonaJuego").style.display = "none";
+    document.getElementById("desxifrant").style.display = "block";
+
+    setTimeout(() => {
+      document.getElementById("desxifrant").style.display = "none";
+      document.getElementById("fotoContenidor").classList.add("visible");
+    },1500);
+  },550);
+}
 
 function reiniciar(){
+  completado = false;
 
+  document.querySelectorAll(".celda").forEach(celda => {
+    celda.dataset.estado = "vacia";
+    celda.classList.remove("llena","cruz");
+  });
 
-    document
-        .querySelectorAll('.celda')
-        .forEach(c => {
-
-            c.dataset.estado =
-                'vacia';
-
-            c.classList.remove(
-                'bloqueada',
-                'marcada'
-            );
-
-        });
-
-
-    /*
-     * Volvemos a mostrar el nonograma.
-     */
-
-    document.getElementById(
-        'juego'
-    ).style.display = 'grid';
-
-
-    /*
-     * Volvemos a mostrar los botones.
-     */
-
-    document.getElementById(
-        'controles'
-    ).style.display = 'flex';
-
-
-    /*
-     * Ocultamos el mensaje.
-     */
-
-    document.getElementById(
-        'descifrando'
-    ).style.display = 'none';
-
-
-    /*
-     * Ocultamos de nuevo la foto.
-     */
-
-    document.getElementById(
-        'fotoContenedor'
-    ).classList.remove(
-        'visible'
-    );
-
-
-    /*
-     * Limpiamos el resultado.
-     */
-
-    estado.className =
-        'estado';
-
-    estado.innerHTML =
-        '';
-
+  document.getElementById("zonaJuego").style.display = "block";
+  document.getElementById("zonaJuego").style.opacity = "1";
+  document.getElementById("zonaJuego").style.transform = "scale(1)";
+  document.getElementById("desxifrant").style.display = "none";
+  document.getElementById("fotoContenidor").classList.remove("visible");
 }
-
 </script>
 
 </body>
