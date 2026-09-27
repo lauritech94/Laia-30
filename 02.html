@@ -4,252 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Record desconegut</title>
-
 <style>
-:root{
-  --color:#ffd84d;
-  --color2:#ff9f43;
-  --dark:#25263a;
-  --soft:#fff7d6;
-}
-
-*{
-  box-sizing:border-box;
-}
-
-body{
-  margin:0;
-  min-height:100vh;
-  padding:20px;
-  font-family:Arial,sans-serif;
-  color:var(--dark);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:
-    radial-gradient(circle at 15% 15%,rgba(255,255,255,.75),transparent 25%),
-    linear-gradient(135deg,var(--soft),#eee9ff);
-}
-
-.fondo-bolas{
-  position:fixed;
-  inset:0;
-  overflow:hidden;
-  pointer-events:none;
-  z-index:-1;
-}
-
-.bola{
-  position:absolute;
-  border-radius:50%;
-  filter:blur(1px);
-  opacity:.23;
-  box-shadow:
-    inset -8px -10px 15px rgba(0,0,0,.12),
-    inset 7px 7px 12px rgba(255,255,255,.55);
-}
-
-.b1{
-  width:130px;
-  height:130px;
-  background:#ffd93d;
-  top:5%;
-  left:-30px;
-}
-
-.b2{
-  width:90px;
-  height:90px;
-  background:#6bcB77;
-  bottom:8%;
-  right:3%;
-}
-
-.b3{
-  width:70px;
-  height:70px;
-  background:#4d96ff;
-  top:18%;
-  right:8%;
-}
-
-.b4{
-  width:110px;
-  height:110px;
-  background:#ff6b6b;
-  bottom:-20px;
-  left:12%;
-}
-
-.tarjeta{
-  width:100%;
-  max-width:520px;
-  background:rgba(255,255,255,.96);
-  border-radius:28px;
-  padding:28px 24px;
-  box-shadow:0 18px 50px rgba(37,38,58,.18);
-  border:1px solid rgba(255,255,255,.8);
-  text-align:center;
-}
-
-h1{
-  font-size:28px;
-  margin:0 0 10px;
-}
-
-.subtitulo{
-  margin:0 0 20px;
-  color:#707184;
-  font-size:15px;
-}
-
-.pista{
-  padding:20px;
-  background:linear-gradient(135deg,var(--soft),#fff);
-  border-left:5px solid var(--color);
-  border-radius:16px;
-  text-align:left;
-  font-size:18px;
-  line-height:1.6;
-  white-space:pre-line;
-  margin-bottom:18px;
-}
-
-input{
-  width:100%;
-  padding:15px;
-  border:2px solid #dedee8;
-  border-radius:13px;
-  font-size:19px;
-  text-align:center;
-  outline:none;
-  margin-bottom:12px;
-}
-
-input:focus{
-  border-color:var(--color2);
-  box-shadow:0 0 0 4px rgba(255,159,67,.16);
-}
-
-button{
-  width:100%;
-  border:0;
-  border-radius:13px;
-  padding:15px;
-  font-weight:800;
-  font-size:16px;
-  cursor:pointer;
-  background:var(--dark);
-  color:white;
-}
-
-button:hover{
-  transform:translateY(-1px);
-}
-
-button:disabled{
-  cursor:default;
-  opacity:.7;
-  transform:none;
-}
-
-.resultado{
-  display:none;
-  margin-top:18px;
-  padding:18px;
-  border-radius:15px;
-  line-height:1.6;
-}
-
-.correcto{
-  display:block;
-  background:#def7e4;
-  color:#155d2b;
-}
-
-.incorrecto{
-  display:block;
-  background:#ffe0e0;
-  color:#822;
-}
-
-.descifrando{
-  display:none;
-  margin-top:18px;
-  padding:18px;
-  border-radius:15px;
-  background:#fff0ad;
-  color:#5c4700;
-  font-weight:800;
-  animation:pulso 1s ease-in-out infinite alternate;
-}
-
-.foto-contenedor{
-  max-height:0;
-  opacity:0;
-  overflow:hidden;
-  transform:translateY(18px) scale(.97);
-  transition:
-    max-height 1.8s ease,
-    opacity 1.8s ease,
-    transform 1.8s ease;
-}
-
-.foto-contenedor.visible{
-  max-height:1000px;
-  opacity:1;
-  transform:translateY(0) scale(1);
-}
-
-.foto{
-  display:block;
-  width:100%;
-  height:auto;
-  border-radius:18px;
-  margin-top:18px;
-  border:4px solid var(--soft);
-  box-shadow:0 12px 30px rgba(37,38,58,.17);
-}
-
-@keyframes pulso{
-  from{transform:scale(1);opacity:.75}
-  to{transform:scale(1.02);opacity:1}
-}
-
-@media(max-width:420px){
-  body{
-    padding:12px;
-  }
-
-  .tarjeta{
-    padding:24px 18px;
-  }
-
-  .pista{
-    font-size:17px;
-  }
-}
+:root{--color:#ffd84d;--color2:#ff9f43;--dark:#25263a;--soft:#fff7d6;}*{box-sizing:border-box}
+body{margin:0;min-height:100vh;padding:20px;font-family:Arial,sans-serif;color:var(--dark);display:flex;justify-content:center;align-items:center;background:radial-gradient(circle at 15% 15%,rgba(255,255,255,.75),transparent 25%),linear-gradient(135deg,var(--soft),#eee9ff);}
+.fondo-bolas{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:-1}.bola{position:absolute;border-radius:50%;filter:blur(1px);opacity:.23;box-shadow:inset -8px -10px 15px rgba(0,0,0,.12), inset 7px 7px 12px rgba(255,255,255,.55)}
+.b1{width:130px;height:130px;background:#ffd93d;top:5%;left:-30px}.b2{width:90px;height:90px;background:#6bcB77;bottom:8%;right:3%}.b3{width:70px;height:70px;background:#4d96ff;top:18%;right:8%}.b4{width:110px;height:110px;background:#ff6b6b;bottom:-20px;left:12%}
+.tarjeta{width:100%;max-width:520px;background:rgba(255,255,255,.96);border-radius:28px;padding:28px 24px;box-shadow:0 18px 50px rgba(37,38,58,.18);border:1px solid rgba(255,255,255,.8);text-align:center}
+h1{font-size:28px;margin:0 0 10px}.subtitulo{margin:0 0 20px;color:#707184;font-size:15px}.pista{padding:20px;background:linear-gradient(135deg,var(--soft),#fff);border-left:5px solid var(--color);border-radius:16px;text-align:left;font-size:18px;line-height:1.6;white-space:pre-line;margin-bottom:18px}
+input{width:100%;padding:15px;border:2px solid #dedee8;border-radius:13px;font-size:19px;text-align:center;outline:none;margin-bottom:12px}button{width:100%;border:0;border-radius:13px;padding:15px;font-weight:800;font-size:16px;cursor:pointer;background:var(--dark);color:white}.resultado{display:none;margin-top:18px;padding:18px;border-radius:15px;line-height:1.6}.correcto{display:block;background:#def7e4;color:#155d2b}.incorrecto{display:block;background:#ffe0e0;color:#822}
+.descifrando{display:none;margin-top:18px;padding:18px;border-radius:15px;background:#fff0ad;color:#5c4700;font-weight:800}
+.foto-contenedor{max-height:0;opacity:0;overflow:hidden;transform:translateY(20px);transition:max-height 1.8s ease,opacity 1.8s ease,transform 1.8s ease}
+.foto-contenedor.visible{max-height:1000px;opacity:1;transform:translateY(0)}
+.foto{width:100%;border-radius:18px;border:4px solid var(--soft);display:block}.record{margin-top:15px;font-size:20px;font-weight:800;color:var(--color2)}
 </style>
 </head>
-
 <body>
-
-<div class="fondo-bolas">
-  <span class="bola b1"></span>
-  <span class="bola b2"></span>
-  <span class="bola b3"></span>
-  <span class="bola b4"></span>
-</div>
-
+<div class="fondo-bolas"><span class="bola b1"></span><span class="bola b2"></span><span class="bola b3"></span><span class="bola b4"></span></div>
 <main class="tarjeta">
-
-  <h1>Record desconegut</h1>
-
-  <p class="subtitulo">
-    Sembla que aquest record està bloquejat...
-  </p>
-
-  <section class="pista">El Minion ha deixat una única pista per ajudar-te.
+<h1>Record desconegut</h1>
+<p class="subtitulo">Sembla que aquest record està bloquejat...</p>
+<section class="pista" id="pista">El Minion ha deixat una única pista per ajudar-te.
 
 Pensa-hi bé abans de respondre:
 
@@ -260,81 +34,32 @@ Pensa-hi bé abans de respondre:
 Què tenen en comú?
 
 Escriu una sola paraula per recuperar el record.</section>
-
-  <input
-    id="resposta"
-    type="text"
-    placeholder="Escriu la teva resposta"
-    autocomplete="off"
-  >
-
-  <button id="boto" type="button" onclick="comprovar()">
-    DESXIFRAR ESFERA
-  </button>
-
-  <div id="resultat" class="resultado"></div>
-
-  <div id="desxifrant" class="descifrando">
-    🔮 Desxifrant el record...
-  </div>
-
-  <div id="fotoContenidor" class="foto-contenedor">
-    <img
-      id="foto"
-      class="foto"
-      src="carnaval.jpg"
-      alt="Record recuperat"
-    >
-  </div>
-
+<input id="resposta" type="text" placeholder="Escriu la teva resposta">
+<button id="boto" onclick="comprovar()">DESXIFRAR ESFERA</button>
+<div id="resultat" class="resultado"></div>
+<div id="desxifrant" class="descifrando">🔮 Desxifrant record...</div>
+<div id="fotoContenidor" class="foto-contenedor">
+<img id="foto" class="foto" src="carnaval.jpg" alt="Record recuperat">
+<div class="record">✨ Record recuperat</div>
+</div>
 </main>
-
 <script>
-function normalitzar(text){
-  return text
-    .toLowerCase()
-    .trim()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g,"");
-}
-
+function normalitzar(t){return t.toLowerCase().trim().normalize('NFD').replace(/[̀-ͯ]/g,'')}
 function comprovar(){
-  const valor = normalitzar(
-    document.getElementById("resposta").value
-  );
-
-  const resultat = document.getElementById("resultat");
-  const desxifrant = document.getElementById("desxifrant");
-  const fotoContenidor = document.getElementById("fotoContenidor");
-  const boto = document.getElementById("boto");
-  const resposta = document.getElementById("resposta");
-
-  if(valor === "plumes" || valor === "ploma"){
-    resultat.style.display = "none";
-    desxifrant.style.display = "block";
-    boto.disabled = true;
-    resposta.disabled = true;
-
-    setTimeout(() => {
-      desxifrant.style.display = "none";
-      resultat.className = "resultado correcto";
-      resultat.innerHTML = "✨ <strong>Esfera desxifrada</strong><br><br>El record ha estat recuperat.";
-      fotoContenidor.classList.add("visible");
-    }, 1400);
-  }else{
-    resultat.className = "resultado incorrecto";
-    resultat.innerHTML = "❌ Aquesta no és la paraula correcta.";
-  }
+const valor=normalitzar(document.getElementById('resposta').value);
+const resultat=document.getElementById('resultat');
+if(valor==='plumes'){
+ document.getElementById('pista').style.display='none';
+ document.getElementById('resposta').style.display='none';
+ document.getElementById('boto').style.display='none';
+ document.getElementById('desxifrant').style.display='block';
+ setTimeout(()=>{document.getElementById('desxifrant').style.display='none';document.getElementById('fotoContenidor').classList.add('visible');},1500);
+}else{
+ resultat.className='resultado incorrecto';
+ resultat.innerHTML='❌ Aquesta no és la paraula correcta.';
 }
-
-document
-  .getElementById("resposta")
-  .addEventListener("keydown", event => {
-    if(event.key === "Enter"){
-      comprovar();
-    }
-  });
+}
+document.getElementById('resposta').addEventListener('keydown',e=>{if(e.key==='Enter')comprovar()});
 </script>
-
 </body>
 </html>
