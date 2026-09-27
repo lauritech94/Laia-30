@@ -1,369 +1,182 @@
 <!DOCTYPE html>
-<html lang="ca">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Composició bloquejada</title>
+<title>Nonograma 10×10</title>
 <style>
-:root{
-  --color:#ffd84d;
-  --color2:#ff9f43;
-  --dark:#25263a;
-  --soft:#fff7d6;
-}
+:root{--color:#ffd84d;--color2:#ff9f43;--dark:#25263a;--soft:#fff7d6;--line:#cfd1dc;--cell:#f7f7fa;}
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%;touch-action:none}
-body{
-  min-height:100vh;
-  padding:14px;
-  font-family:Arial,sans-serif;
-  color:var(--dark);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:
-    radial-gradient(circle at 15% 15%,rgba(255,255,255,.75),transparent 25%),
-    linear-gradient(135deg,var(--soft),#eee9ff);
-}
+body{margin:0;min-height:100vh;padding:20px;font-family:Arial,sans-serif;color:var(--dark);display:flex;justify-content:center;align-items:center;background:radial-gradient(circle at 15% 15%,rgba(255,255,255,.75),transparent 25%),linear-gradient(135deg,var(--soft),#eee9ff);}
 .fondo-bolas{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:-1}
 .bola{position:absolute;border-radius:50%;filter:blur(1px);opacity:.23;box-shadow:inset -8px -10px 15px rgba(0,0,0,.12),inset 7px 7px 12px rgba(255,255,255,.55)}
-.b1{width:130px;height:130px;background:#ffd93d;top:5%;left:-30px}
-.b2{width:90px;height:90px;background:#6bcB77;bottom:8%;right:3%}
-.b3{width:70px;height:70px;background:#4d96ff;top:18%;right:8%}
-.b4{width:110px;height:110px;background:#ff6b6b;bottom:-20px;left:12%}
-.tarjeta{
-  width:100%;
-  max-width:540px;
-  background:rgba(255,255,255,.96);
-  border-radius:28px;
-  padding:24px 20px;
-  box-shadow:0 18px 50px rgba(37,38,58,.18);
-  border:1px solid rgba(255,255,255,.8);
-  text-align:center;
+.b1{width:130px;height:130px;background:#ffd93d;top:5%;left:-30px}.b2{width:90px;height:90px;background:#6bcB77;bottom:8%;right:3%}.b3{width:70px;height:70px;background:#4d96ff;top:18%;right:8%}.b4{width:110px;height:110px;background:#ff6b6b;bottom:-20px;left:12%}
+.tarjeta{width:100%;max-width:700px;background:rgba(255,255,255,.96);border-radius:28px;padding:28px 24px;box-shadow:0 18px 50px rgba(37,38,58,.18);border:1px solid rgba(255,255,255,.8);text-align:center}
+h1{font-size:28px;margin:0 0 8px}.subtitulo{margin:0 0 20px;color:#707184;font-size:15px}
+.instrucciones{padding:14px 16px;background:linear-gradient(135deg,var(--soft),#fff);border-left:5px solid var(--color);border-radius:16px;text-align:left;font-size:15px;line-height:1.5;margin-bottom:20px}
+.juego{display:grid;grid-template-columns:82px minmax(0,1fr);grid-template-rows:82px minmax(0,1fr);gap:0;margin:0 auto 18px;width:min(100%,560px);}
+.esquina{border-right:2px solid var(--dark);border-bottom:2px solid var(--dark);background:#fff}
+.claves-columnas{display:grid;grid-template-columns:repeat(10,1fr);border-bottom:2px solid var(--dark);}
+.clave-col{display:flex;align-items:flex-end;justify-content:center;padding:5px 2px;font-weight:800;font-size:12px;line-height:1.05;border-right:1px solid var(--line);white-space:pre-line}
+.claves-filas{display:grid;grid-template-rows:repeat(10,1fr);border-right:2px solid var(--dark);}
+.clave-fila{display:flex;align-items:center;justify-content:flex-end;padding:0 8px;font-weight:800;font-size:12px;line-height:1.05;border-bottom:1px solid var(--line);white-space:pre-line}
+.tablero{display:grid;grid-template-columns:repeat(10,1fr);grid-template-rows:repeat(10,1fr);aspect-ratio:1;border:0}
+.celda{appearance:none;border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--cell);cursor:pointer;position:relative;min-width:0;min-height:0}
+.celda:nth-child(5n){border-right-color:#aeb2c1}.celda.bloqueada{background:#25263a}
+.celda.marcada::after{content:"×";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(14px,3vw,24px);font-weight:900;color:#a7a9b4}
+.celda.bloqueada.marcada::after{color:#fff;opacity:.8}
+.controles{display:flex;gap:10px;margin-top:12px}
+button{flex:1;border:0;border-radius:13px;padding:14px;font-weight:800;font-size:15px;cursor:pointer;background:var(--dark);color:white}
+button.secundario{background:#ececf3;color:var(--dark)}
+.estado{display:none;margin-top:16px;padding:16px;border-radius:15px;line-height:1.5}
+.estado.visible{display:block}.correcto{background:#def7e4;color:#155d2b}.incorrecto{background:#ffe0e0;color:#822}
+.descifrando{display:none;margin-top:16px;padding:18px;border-radius:15px;background:#fff0ad;color:#5c4700;font-weight:800}
+.foto-contenedor{max-height:0;opacity:0;overflow:hidden;transform:translateY(20px);transition:max-height 1.8s ease,opacity 1.8s ease,transform 1.8s ease}
+.foto-contenedor.visible{max-height:900px;opacity:1;transform:translateY(0);margin-top:18px}
+.foto{width:100%;border-radius:18px;border:4px solid var(--soft);display:block}
+.record{margin-top:15px;font-size:20px;font-weight:800;color:var(--color2)}
+@media(max-width:560px){
+ body{padding:10px}.tarjeta{padding:20px 12px;border-radius:22px}h1{font-size:24px}
+ .juego{grid-template-columns:62px minmax(0,1fr);grid-template-rows:68px minmax(0,1fr)}
+ .clave-fila,.clave-col{font-size:10px;padding:3px}.clave-fila{padding-right:5px}
+ .controles{flex-direction:column}
 }
-h1{font-size:27px;margin:0 0 6px}
-.subtitulo{margin:0 0 15px;color:#707184;font-size:15px}
-#zonaJuego{transition:opacity .55s ease,transform .55s ease}
-#lienzo{
-  position:relative;
-  width:100%;
-  aspect-ratio:1;
-  overflow:hidden;
-  border-radius:18px;
-  background:#eee8dc;
-  border:4px solid #fff1b8;
-  box-shadow:inset 0 0 28px rgba(37,38,58,.15);
-  touch-action:none;
-}
-canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
-#completo{z-index:1}
-#guia{z-index:2;pointer-events:none}
-#pintura{z-index:3;cursor:crosshair}
-#rodillo{
-  position:absolute;
-  width:82px;
-  height:30px;
-  border-radius:9px;
-  background:var(--pintura,#d83b36);
-  border:4px solid rgba(255,255,255,.9);
-  box-shadow:0 8px 17px rgba(0,0,0,.32);
-  transform:translate(-50%,-50%) rotate(-8deg);
-  pointer-events:none;
-  opacity:0;
-  z-index:8;
-}
-#rodillo:after{content:"";position:absolute;width:8px;height:43px;right:-14px;top:14px;border-radius:5px;background:#737b8e;transform:rotate(-25deg);transform-origin:top}
-#rodillo:before{content:"";position:absolute;width:27px;height:10px;right:-34px;top:48px;border-radius:8px;background:#25263a;transform:rotate(-25deg)}
-#rodillo.visible{opacity:1}
-.etapa{margin:14px 0 9px;padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,#fff7d6,#fff);font-weight:800}
-.progreso{height:8px;background:#e8e8ef;border-radius:999px;overflow:hidden;margin-top:9px}
-#barra{height:100%;width:0;background:#d83b36;border-radius:999px;transition:width .15s,background .3s}
-.indicador{display:flex;justify-content:center;gap:12px;margin-top:12px}
-.paso{width:35px;height:35px;border-radius:50%;display:grid;place-items:center;border:3px solid #dadce6;background:white;font-weight:900;color:#8b8d99;transition:.3s}
-.paso.activo{transform:scale(1.12);border-color:var(--tono);box-shadow:0 0 17px color-mix(in srgb,var(--tono) 55%,transparent);color:var(--tono)}
-.paso.hecho{background:var(--tono);border-color:var(--tono);color:white}
-#desxifrant{display:none;padding:18px;border-radius:15px;background:#fff0ad;color:#5c4700;font-weight:800;animation:pulso .8s ease-in-out infinite alternate}
-#recordFinal{max-height:0;opacity:0;overflow:hidden;transform:translateY(18px) scale(.97);transition:max-height 1.8s ease,opacity 1.8s ease,transform 1.8s ease}
-#recordFinal.visible{max-height:1000px;opacity:1;transform:translateY(0) scale(1)}
-#recordFinal img{display:block;width:100%;height:auto;border-radius:18px;border:4px solid var(--soft);box-shadow:0 12px 30px rgba(37,38,58,.18)}
-.record{margin-top:14px;font-size:20px;font-weight:900;color:var(--color2)}
-@keyframes pulso{from{transform:scale(1);opacity:.78}to{transform:scale(1.02);opacity:1}}
-@media(max-width:420px){.tarjeta{padding:20px 14px}h1{font-size:24px}.etapa{font-size:14px}}
 </style>
 </head>
 <body>
 <div class="fondo-bolas"><span class="bola b1"></span><span class="bola b2"></span><span class="bola b3"></span><span class="bola b4"></span></div>
+
 <main class="tarjeta">
-  <div id="zonaJuego">
-    <h1>Composició bloquejada</h1>
-    <p class="subtitulo">Passa el corró per la silueta, capa per capa.</p>
+  <h1>🌸 Nonograma 10×10</h1>
+  <p class="subtitulo">Completa la cuadrícula y descubre la imagen secreta.</p>
 
-    <div id="lienzo">
-      <canvas id="completo"></canvas>
-      <canvas id="guia"></canvas>
-      <canvas id="pintura"></canvas>
-      <div id="rodillo"></div>
-    </div>
+  <section class="instrucciones">
+    <strong>Cómo jugar:</strong> los números indican cuántas casillas seguidas debes rellenar en cada fila y columna.
+    Cuando haya varios números, debe existir al menos una casilla vacía entre cada grupo. Pulsa una casilla para
+    <strong>rellenarla</strong> y vuelve a pulsarla para marcarla con <strong>×</strong>.
+  </section>
 
-    <div id="etapa" class="etapa">1. Pinta l'escut vermell</div>
-    <div class="progreso"><div id="barra"></div></div>
-
-    <div class="indicador">
-      <div id="paso0" class="paso activo" style="--tono:#d83b36">1</div>
-      <div id="paso1" class="paso" style="--tono:#171820">2</div>
-      <div id="paso2" class="paso" style="--tono:#d7e4ef">3</div>
-    </div>
+  <div class="juego">
+    <div class="esquina"></div>
+    <div class="claves-columnas" id="clavesColumnas"></div>
+    <div class="claves-filas" id="clavesFilas"></div>
+    <div class="tablero" id="tablero"></div>
   </div>
 
-  <div id="desxifrant">🔮 Desxifrant el record...</div>
+  <div class="controles">
+    <button class="secundario" onclick="reiniciar()">↺ REINICIAR</button>
+    <button onclick="comprobar()">✓ COMPROBAR</button>
+  </div>
 
-  <div id="recordFinal">
-    <img src="universitat.jpg" alt="Record recuperat">
-    <div class="record">✨ Record recuperat</div>
+  <div id="estado" class="estado"></div>
+  <div id="descifrando" class="descifrando">✨ Descubriendo la imagen...</div>
+
+  <div id="fotoContenedor" class="foto-contenedor">
+    <img class="foto" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNTIwIj4KPGRlZnM+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJza3kiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzllZGNmZiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2VhZjhmZiIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncm91bmQiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzhmZDM2ZCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzRkOWI1NSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPHJlY3Qgd2lkdGg9IjgwMCIgaGVpZ2h0PSI1MjAiIHJ4PSIyOCIgZmlsbD0idXJsKCNza3kpIi8+CjxjaXJjbGUgY3g9IjY1MCIgY3k9IjEwMCIgcj0iNTgiIGZpbGw9IiNmZmQ4NGQiIG9wYWNpdHk9Ii45Ii8+CjxwYXRoIGQ9Ik0wIDMzMCBRMTYwIDI1MCAzMTAgMzM1IFQ4MDAgMzEwIFY1MjAgSDBaIiBmaWxsPSJ1cmwoI2dyb3VuZCkiLz4KPHBhdGggZD0iTTAgMzkwIFExODAgMzAwIDM1MCAzOTUgVDgwMCAzNjUgVjUyMCBIMFoiIGZpbGw9IiM2ZmJhNWYiLz4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNDAwIDMzMCkiPgogIDxwYXRoIGQ9Ik0tMTIgMTQ1IEMtMTAgODUgLTggMjUgMCAtMjAiIHN0cm9rZT0iIzJlN2Q0NSIgc3Ryb2tlLXdpZHRoPSIxNiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHBhdGggZD0iTS0yIDgwIEMtNjUgNDAgLTEwNSA1NSAtMTQwIDkwIEMtODAgMTAwIC00MCAxMDUgLTIgOThaIiBmaWxsPSIjM2Y5ZDU1Ii8+CiAgPHBhdGggZD0iTTIgNTUgQzU1IDI1IDkyIDMyIDEyNiA2MiBDNzUgNzcgNDAgNzUgMiA3MFoiIGZpbGw9IiM0YWE3NWIiLz4KICA8ZyBmaWxsPSIjZmY2YjhhIj4KICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iLTcwIiByeD0iMzQiIHJ5PSI3MCIvPgogICAgPGVsbGlwc2UgY3g9IjAiIGN5PSItNzAiIHJ4PSIzNCIgcnk9IjcwIiB0cmFuc2Zvcm09InJvdGF0ZSg3MiAwIC03MCkiLz4KICAgIDxlbGxpcHNlIGN4PSIwIiBjeT0iLTcwIiByeD0iMzQiIHJ5PSI3MCIgdHJhbnNmb3JtPSJyb3RhdGUoMTQ0IDAgLTcwKSIvPgogICAgPGVsbGlwc2UgY3g9IjAiIGN5PSItNzAiIHJ4PSIzNCIgcnk9IjcwIiB0cmFuc2Zvcm09InJvdGF0ZSgyMTYgMCAtNzApIi8+CiAgICA8ZWxsaXBzZSBjeD0iMCIgY3k9Ii03MCIgcng9IjM0IiByeT0iNzAiIHRyYW5zZm9ybT0icm90YXRlKDI4OCAwIC03MCkiLz4KICA8L2c+CiAgPGNpcmNsZSBjeT0iLTcwIiByPSIzMCIgZmlsbD0iI2ZmZDg0ZCIvPgo8L2c+CjxnIGZpbGw9IiNmZmYiIG9wYWNpdHk9Ii44NSI+CiAgPGNpcmNsZSBjeD0iMTMwIiBjeT0iMTA1IiByPSI3Ii8+PGNpcmNsZSBjeD0iMTc1IiBjeT0iODAiIHI9IjUiLz48Y2lyY2xlIGN4PSIyMzUiIGN5PSIxMjUiIHI9IjYiLz4KPC9nPgo8L3N2Zz4=" alt="Imagen secreta descubierta">
+    <div class="record">🎉 ¡Nonograma completado!</div>
   </div>
 </main>
 
 <script>
-const lienzo=document.getElementById('lienzo');
-const completo=document.getElementById('completo');
-const guia=document.getElementById('guia');
-const pintura=document.getElementById('pintura');
-const c=completo.getContext('2d');
-const g=guia.getContext('2d');
-const p=pintura.getContext('2d');
-const rodillo=document.getElementById('rodillo');
-const etapaTexto=document.getElementById('etapa');
-const barra=document.getElementById('barra');
+const FILAS = [[1, 1], [3, 3], [10], [10], [2, 7], [2, 7], [2, 5], [2, 3], [4], [2]];
+const COLUMNAS = [[4], [6], [4, 2], [5, 2], [5, 2], [8], [8], [8], [6], [4]];
+const SOLUCION = ['0010000100',
+				  '0111001110', 
+				  '1111111111', 
+				  '1111111111', 
+				  '1101111111', 
+				  '1101111111', 
+				  '0110111110', 
+				  '0011011100', 
+				  '0001111000', 
+				  '0000110000'];
 
-const colores=['#d83b36','#171820','#f5f8fb'];
-const textos=["1. Pinta l'escut vermell","2. Pinta la silueta negra","3. Pinta els detalls blancs"];
-const umbrales=[0.45,0.42,0.34];
-let etapa=0;
-let pintando=false;
-let ultimo=null;
-let ancho=0;
-let alto=0;
-let ratio=1;
-let mascara=null;
-let celdasObjetivo=[];
-let celdasPintadas=new Set();
+const tablero = document.getElementById('tablero');
+const clavesFilas = document.getElementById('clavesFilas');
+const clavesColumnas = document.getElementById('clavesColumnas');
+const estado = document.getElementById('estado');
 
-function configurarCanvas(canvas,ctx){
-  canvas.width=Math.round(ancho*ratio);
-  canvas.height=Math.round(alto*ratio);
-  ctx.setTransform(ratio,0,0,ratio,0,0);
+function textoClave(nums) {
+  return nums.join('\n');
 }
 
-function ajustar(){
-  const r=lienzo.getBoundingClientRect();
-  ratio=window.devicePixelRatio||1;
-  ancho=r.width;
-  alto=r.height;
-  configurarCanvas(completo,c);
-  configurarCanvas(guia,g);
-  configurarCanvas(pintura,p);
-  dibujarComposicionBase();
-  prepararEtapa();
-}
+COLUMNAS.forEach(c => {
+  const el = document.createElement('div');
+  el.className = 'clave-col';
+  el.textContent = textoClave(c);
+  clavesColumnas.appendChild(el);
+});
 
-function crearRuta(capa){
-  const path=new Path2D();
-  const cx=ancho/2;
-  const cy=alto*.52;
-  const radio=Math.min(ancho,alto)*.40;
+FILAS.forEach(f => {
+  const el = document.createElement('div');
+  el.className = 'clave-fila';
+  el.textContent = textoClave(f);
+  clavesFilas.appendChild(el);
+});
 
-  if(capa===0){
-    path.arc(cx,cy,radio,0,Math.PI*2);
-  }
+for(let r=0;r<10;r++) {
+  for(let c=0;c<10;c++) {
+    const celda = document.createElement('button');
+    celda.className = 'celda';
+    celda.type = 'button';
+    celda.dataset.r = r;
+    celda.dataset.c = c;
+    celda.dataset.estado = 'vacia';
 
-  if(capa===1){
-    path.moveTo(cx,alto*.18);
-    path.bezierCurveTo(ancho*.42,alto*.20,ancho*.38,alto*.30,ancho*.39,alto*.39);
-    path.lineTo(ancho*.30,alto*.48);
-    path.lineTo(ancho*.25,alto*.78);
-    path.lineTo(ancho*.42,alto*.68);
-    path.lineTo(cx,alto*.86);
-    path.lineTo(ancho*.58,alto*.68);
-    path.lineTo(ancho*.75,alto*.78);
-    path.lineTo(ancho*.70,alto*.48);
-    path.lineTo(ancho*.61,alto*.39);
-    path.bezierCurveTo(ancho*.62,alto*.30,ancho*.58,alto*.20,cx,alto*.18);
-    path.closePath();
-  }
-
-  if(capa===2){
-    path.moveTo(ancho*.40,alto*.38);
-    path.quadraticCurveTo(ancho*.45,alto*.32,ancho*.49,alto*.39);
-    path.quadraticCurveTo(ancho*.45,alto*.47,ancho*.39,alto*.43);
-    path.closePath();
-
-    path.moveTo(ancho*.60,alto*.38);
-    path.quadraticCurveTo(ancho*.55,alto*.32,ancho*.51,alto*.39);
-    path.quadraticCurveTo(ancho*.55,alto*.47,ancho*.61,alto*.43);
-    path.closePath();
-
-    path.moveTo(cx,alto*.50);
-    path.lineTo(ancho*.57,alto*.58);
-    path.lineTo(ancho*.52,alto*.59);
-    path.lineTo(ancho*.57,alto*.70);
-    path.lineTo(ancho*.43,alto*.61);
-    path.lineTo(ancho*.48,alto*.60);
-    path.closePath();
-  }
-
-  return path;
-}
-
-function dibujarComposicionBase(){
-  c.clearRect(0,0,ancho,alto);
-  c.fillStyle='#eee8dc';
-  c.fillRect(0,0,ancho,alto);
-}
-
-function prepararEtapa(){
-  p.clearRect(0,0,ancho,alto);
-  g.clearRect(0,0,ancho,alto);
-  mascara=crearRuta(etapa);
-  celdasPintadas=new Set();
-  celdasObjetivo=[];
-
-  g.save();
-  g.fillStyle=etapa===2?'rgba(65,78,92,.15)':'rgba(37,38,58,.10)';
-  g.strokeStyle=colores[etapa];
-  g.lineWidth=4;
-  g.setLineDash([9,7]);
-  g.fill(mascara);
-  g.stroke(mascara);
-  g.restore();
-
-  const paso=12;
-  for(let y=paso/2;y<alto;y+=paso){
-    for(let x=paso/2;x<ancho;x+=paso){
-      if(g.isPointInPath(mascara,x,y)) celdasObjetivo.push({x,y,key:`${Math.round(x/paso)}-${Math.round(y/paso)}`});
-    }
-  }
-
-  etapaTexto.textContent=textos[etapa];
-  barra.style.width='0%';
-  barra.style.background=colores[etapa];
-  rodillo.style.setProperty('--pintura',colores[etapa]);
-}
-
-function registrarCobertura(x,y,radio){
-  for(const celda of celdasObjetivo){
-    if(Math.hypot(celda.x-x,celda.y-y)<=radio) celdasPintadas.add(celda.key);
-  }
-  const porcentaje=celdasObjetivo.length?celdasPintadas.size/celdasObjetivo.length:0;
-  barra.style.width=Math.min(100,porcentaje/umbrales[etapa]*100)+'%';
-  if(porcentaje>=umbrales[etapa]) completarEtapa();
-}
-
-function pintarSegmento(a,b){
-  const radio=Math.max(24,ancho*.075);
-
-  p.save();
-  p.clip(mascara);
-  p.strokeStyle=colores[etapa];
-  p.lineWidth=radio*2;
-  p.lineCap='round';
-  p.lineJoin='round';
-  p.beginPath();
-  p.moveTo(a.x,a.y);
-  p.lineTo(b.x,b.y);
-  p.stroke();
-  p.restore();
-
-  const distancia=Math.hypot(b.x-a.x,b.y-a.y);
-  const pasos=Math.max(1,Math.ceil(distancia/8));
-  for(let i=0;i<=pasos;i++){
-    const t=i/pasos;
-    registrarCobertura(a.x+(b.x-a.x)*t,a.y+(b.y-a.y)*t,radio*.78);
+    celda.addEventListener('click', () => {
+      const actual = celda.dataset.estado;
+      if(actual === 'vacia') {
+        celda.dataset.estado = 'llena';
+        celda.classList.add('bloqueada');
+        celda.classList.remove('marcada');
+      } else if(actual === 'llena') {
+        celda.dataset.estado = 'cruz';
+        celda.classList.remove('bloqueada');
+        celda.classList.add('marcada');
+      } else {
+        celda.dataset.estado = 'vacia';
+        celda.classList.remove('bloqueada','marcada');
+      }
+    });
+    tablero.appendChild(celda);
   }
 }
 
-function completarEtapa(){
-  if(etapa>=3)return;
+function comprobar() {
+  let correcto = true;
+  document.querySelectorAll('.celda').forEach(c => {
+    const r = Number(c.dataset.r);
+    const col = Number(c.dataset.c);
+    const marcada = c.dataset.estado === 'llena';
+    const debeEstarLlena = SOLUCION[r][col] === '1';
+    if(marcada !== debeEstarLlena) correcto = false;
+  });
 
-  c.save();
-  c.fillStyle=colores[etapa];
-  c.fill(mascara);
-  c.restore();
+  estado.className = 'estado visible ' + (correcto ? 'correcto' : 'incorrecto');
+  estado.innerHTML = correcto
+    ? '✅ ¡Correcto! Has completado el nonograma.'
+    : '❌ Todavía hay alguna casilla incorrecta. Revisa las pistas y vuelve a intentarlo.';
 
-  document.getElementById('paso'+etapa).classList.remove('activo');
-  document.getElementById('paso'+etapa).classList.add('hecho');
-
-  etapa++;
-  pintando=false;
-  ultimo=null;
-  rodillo.classList.remove('visible');
-
-  if(etapa===3){
-    p.clearRect(0,0,ancho,alto);
-    g.clearRect(0,0,ancho,alto);
-    barra.style.width='100%';
-    setTimeout(finalizar,650);
-    return;
+  if(correcto) {
+    document.getElementById('descifrando').style.display = 'block';
+    document.getElementById('fotoContenedor').classList.remove('visible');
+    setTimeout(() => {
+      document.getElementById('descifrando').style.display = 'none';
+      document.getElementById('fotoContenedor').classList.add('visible');
+      document.getElementById('fotoContenedor').scrollIntoView({behavior:'smooth',block:'center'});
+    }, 1200);
   }
-
-  document.getElementById('paso'+etapa).classList.add('activo');
-  prepararEtapa();
 }
 
-function posicion(e){
-  const r=pintura.getBoundingClientRect();
-  return{x:e.clientX-r.left,y:e.clientY-r.top};
+function reiniciar() {
+  document.querySelectorAll('.celda').forEach(c => {
+    c.dataset.estado = 'vacia';
+    c.classList.remove('bloqueada','marcada');
+  });
+  estado.className = 'estado';
+  document.getElementById('descifrando').style.display = 'none';
+  document.getElementById('fotoContenedor').classList.remove('visible');
 }
-
-function iniciar(e){
-  if(etapa>=3)return;
-  e.preventDefault();
-  pintando=true;
-  ultimo=posicion(e);
-  pintura.setPointerCapture(e.pointerId);
-  moverRodillo(ultimo);
-  pintarSegmento(ultimo,{x:ultimo.x+.1,y:ultimo.y+.1});
-}
-
-function mover(e){
-  if(!pintando||etapa>=3)return;
-  e.preventDefault();
-  const ahora=posicion(e);
-  moverRodillo(ahora);
-  pintarSegmento(ultimo,ahora);
-  ultimo=ahora;
-}
-
-function terminar(){
-  pintando=false;
-  ultimo=null;
-  rodillo.classList.remove('visible');
-}
-
-function moverRodillo(pt){
-  rodillo.style.left=pt.x+'px';
-  rodillo.style.top=pt.y+'px';
-  rodillo.classList.add('visible');
-}
-
-function finalizar(){
-  document.getElementById('zonaJuego').style.opacity='0';
-  document.getElementById('zonaJuego').style.transform='scale(.97)';
-  setTimeout(()=>{
-    document.getElementById('zonaJuego').style.display='none';
-    document.getElementById('desxifrant').style.display='block';
-    setTimeout(()=>{
-      document.getElementById('desxifrant').style.display='none';
-      document.getElementById('recordFinal').classList.add('visible');
-    },1400);
-  },550);
-}
-
-pintura.addEventListener('pointerdown',iniciar);
-pintura.addEventListener('pointermove',mover);
-pintura.addEventListener('pointerup',terminar);
-pintura.addEventListener('pointercancel',terminar);
-window.addEventListener('resize',ajustar);
-window.addEventListener('load',ajustar);
 </script>
 </body>
 </html>
