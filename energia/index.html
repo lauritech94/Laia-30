@@ -3,294 +3,61 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Esfera</title>
-
+<title>Esfera Energía V2</title>
 <style>
-
-*{
-    box-sizing:border-box;
-}
-
-bo*y{
-    margin:0;
-    background:#0*172a;
-    min-height:100vh;
-    di*play:flex;
-    justify-content:cen*er;
-    align-items:center;
-    ov*rflow:hidden;
-}
-
-.contenedor{
-    *osition:relative;
-    width:300px;*    height:300px;
-}
-
-.esfera{
-
-   *width:220px;
-    height:220px;
-
-  * border-radius:50%;
-
-    position:*bsolute;
-
-    top:40px;
-    left:4*px;
-
-    background:
-    radial-gr*dient(
-        circle at 30% 30%,
-*       #ffffff,
-        #9a9a9a,
- *      #444444
-    );
-
-    transiti*n:.08s linear;
-
-    box-shadow:
-  * 0 0 10px rgba(255,255,255,.2);
-
- *  touch-action:none;
-
-    z-index:*;
-}
-
-.fragmento{
-
-    position:abs*lute;
-
-    width:40px;
-    height:*0px;
-
-    background:white;
-
-    o*acity:0;
-
-    border-radius:4px;
-
-*   pointer-events:none;
-}
-
-#conten*do{
-
-    opacity:0;
-
-    width:220*x;
-    height:220px;
-
-    position*absolute;
-
-    left:40px;
-    top:*0px;
-
-    border-radius:20px;
-
-   *background:white;
-
-    display:fle*;
-    justify-content:center;
-    *lign-items:center;
-
-    font-size:*0px;
-
-    transition:.8s;
-
-    tra*sform:scale(.6);
-
-}
-
+*{box-sizing:border-box}
+body{margin:0;background:#0f172a;min-height:100vh;display:flex;justify-content:center;align-items:center;overflow:hidden}
+.contenedor{position:relative;width:320px;height:320px}
+.esfera{position:absolute;left:50px;top:50px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff,#8f8f8f,#3b3b3b);box-shadow:0 0 10px rgba(255,255,255,.15);touch-action:none;z-index:2}
+.fragmento{position:absolute;width:22px;height:22px;background:rgba(255,255,255,.95);clip-path:polygon(50% 0%,100% 35%,85% 100%,15% 100%,0% 35%);pointer-events:none}
+#contenido{position:absolute;left:50px;top:50px;width:220px;height:220px;border-radius:20px;background:white;opacity:0;transform:scale(.6);transition:.5s;display:flex;align-items:center;justify-content:center;font-size:60px}
 </style>
-</he*d>
-
+</head>
 <body>
-
-<div class="contenedor*>
-
-    <div id="contenido">
-      * 🔑
-    </div>
-
-    <div id="esfer*" class="esfera"></div>
-
+<div class="contenedor">
+<div id="contenido">🔑</div>
+<div id="esfera" class="esfera"></div>
 </div>
-
-<*cript>
-
-let energia = 0;
-let pulsa*do = false;
-let explotada = false;*
-const esfera =
-document.getElemen*ById("esfera");
-
-const contenido =*document.getElementById("contenido*);
-
-const contenedor =
-document.querySelector(".contenedor");
-
-esfera.addEventListener(
-"pointerdown",
-()=>{
-
-    pulsando = true;
-
-});
-
-window.addEventListener(
-"pointerup",
-()=>{
-
-    pulsando = false;
-
-});
-
-function crearExplosion(){
-
-    for(let i=0;i<25;i++){
-
-        const f =
-        document.createElement("div");
-
-        f.className =
-        "fragmento";
-
-        f.style.left =
-        "130px";
-
-        f.style.top =
-        "130px";
-
-        contenedor.appendChild(f);
-
-        const angulo =
-        Math.random()*360;
-
-        const distancia =
-        80 + Math.random()*120;
-
-        const x =
-        Math.cos(
-            angulo*Math.PI/180
-        ) * distancia;
-
-        const y =
-        Math.sin(
-            angulo*Math.PI/180
-        ) * distancia;*
-        f.animate(
-
-        [
-            {
-                opacity:1,
-                transform:
-                "translate(0,0) rotate(0*eg)"
-            },
-
-            {*                opacity:0,
-       *        transform:
-               *`translate(${x}px,${y}px)
-        *        rotate(720deg)`
-          * }
-
-        ],
-
-        {
-        *   duration:900,
-            easin*:"ease-out"
-        });
-
-    }
-
+<script>
+let energia=0,pulsando=false,fin=false;
+const esfera=document.getElementById('esfera');
+const contenido=document.getElementById('contenido');
+const cont=document.querySelector('.contenedor');
+esfera.addEventListener('pointerdown',()=>pulsando=true);
+window.addEventListener('pointerup',()=>pulsando=false);
+window.addEventListener('pointercancel',()=>pulsando=false);
+function explosion(){
+ for(let i=0;i<35;i++){
+  const f=document.createElement('div');
+  f.className='fragmento';
+  f.style.left='150px';
+  f.style.top='150px';
+  cont.appendChild(f);
+  const a=Math.random()*Math.PI*2;
+  const d=100+Math.random()*130;
+  const x=Math.cos(a)*d;
+  const y=Math.sin(a)*d;
+  f.animate([{opacity:1,transform:'translate(0,0) rotate(0deg)'},{opacity:0,transform:`translate(${x}px,${y}px) rotate(${720+Math.random()*720}deg)`}],{duration:900,easing:'ease-out',fill:'forwards'});
+ }
 }
-*setInterval(()=>{
-
-    if(explotad*) return;
-
-    if(pulsando){
-
-    *   energia += 0.6;
-
-    }else{
-
-  *     energia -= 0.4;
-
-    }
-
-    i*(energia < 0)
-        energia = 0;*
-    if(energia > 100)
-        ene*gia = 100;
-
-    const escala =
-   *1 + energia/500;
-
-    const brillo*=
-    energia * 1.5;
-
-    esfera.s*yle.transform =
-    `scale(${escal*})`;
-
-    esfera.style.boxShadow =*    `
-    0 0 ${brillo}px
-    rgba(255,220,120,.9)
-    `;
-
-    esfera.style.background =
-    `
-    radial-gradient(
-        circle at 30% 30%,
-        white,
-        rgb(${100+energia},
-            ${100+energia/2},
-            120),
-        rgb(${60+energia/5},
-            ${60+energia/6},
-            80)
-    )
-    `;
-
-    if(energia >= 100){
-
-        explotada = true;
-
-        crearExplosion();
-
-        esfera.animate(
-
-        [
-            {
-                transform:"scale(1.2)"
-            },
-            {
-                transform:"scale(1.4)"
-            },
-            {
-                opacity:0
-            }
-
-        ],
-
-        {
-            duration:400,
-            fill:"forwards"
-        });
-
-        setTimeout(()=>{
-
-            contenido.style.opacity =
-            1;
-
-            contenido.style.transform =
-            "scale(1)";
-
-        },300);
-
-    }
-
+setInterval(()=>{
+ if(fin)return;
+ energia += pulsando ? 0.65 : -0.18;
+ if(energia<0)energia=0;
+ if(energia>100)energia=100;
+ const glow=10+energia*1.5;
+ const scale=1+energia/350;
+ const shake=energia>80?(Math.random()*6-3):0;
+ esfera.style.transform=`translateX(${shake}px) scale(${scale})`;
+ esfera.style.boxShadow=`0 0 ${glow}px rgba(255,220,140,.95)`;
+ esfera.style.background=`radial-gradient(circle at 30% 30%, white, rgb(${120+energia},${120+energia/2},150), rgb(${50+energia/6},${50+energia/8},80))`;
+ if(energia>=100){
+   fin=true;
+   explosion();
+   esfera.animate([{transform:'scale(1.2)'},{transform:'scale(1.5)',opacity:1},{opacity:0}],{duration:350,fill:'forwards'});
+   setTimeout(()=>{contenido.style.opacity='1';contenido.style.transform='scale(1)';},300);
+ }
 },20);
-
 </script>
-
 </body>
 </html>
