@@ -132,68 +132,163 @@ body{
 
 <script>
 
-let r1=35;
-let r2=120;
-let r3=250;
+const simbolos = [
+    "⭐",
+    "🛵",
+    "🐧",
+    "❤️",
+    "🧶",
+    "🎨"
+];
 
-const a1=document.getElementById("a1");
-const a2=document.getElementById("a2");
-const a3=document.getElementById("a3");
+const objetivo1 = "🛵";
+const objetivo2 = "🐧";
+const objetivo3 = "❤️";
 
-function pintar(){
+let i1 = 0;
+let i2 = 1;
+let i3 = 2;
 
-    a1.style.transform=
-        `rotate(${r1}deg)`;
+const a1 =
+document.getElementById("a1");
 
-    a2.style.transform=
-        `rotate(${r2}deg)`;
+const a2 =
+document.getElementById("a2");
 
-    a3.style.transform=
-        `rotate(${r3}deg)`;
+const a3 =
+document.getElementById("a3");
 
-    comprobar();
+function render(anillo, indice){
+
+    const actual =
+        simbolos[indice];
+
+    anillo.innerHTML =
+    `
+    <div class="marca"></div>
+    <div style="
+        position:absolute;
+        top:15px;
+        left:50%;
+        transform:translateX(-50%);
+        font-size:34px;
+    ">
+        ${actual}
+    </div>
+    `;
 
 }
 
 function comprobar(){
 
     const ok1 =
-        Math.abs(r1 % 360) < 15;
+        simbolos[i1] === objetivo1;
 
     const ok2 =
-        Math.abs(r2 % 360) < 15;
+        simbolos[i2] === objetivo2;
 
     const ok3 =
-        Math.abs(r3 % 360) < 15;
+        simbolos[i3] === objetivo3;
 
     if(ok1 && ok2 && ok3){
 
         document
         .getElementById("abierto")
-        .style.display="flex";
+        .style.display =
+        "flex";
+
+        document
+        .getElementById("abierto")
+        .animate(
+
+        [
+            {
+                transform:"scale(.5)",
+                opacity:0
+            },
+
+            {
+                transform:"scale(1)",
+                opacity:1
+            }
+
+        ],
+
+        {
+            duration:500,
+            fill:"forwards"
+        });
 
     }
 
 }
 
-a1.onclick=()=>{
-    r1+=30;
+function pintar(){
+
+    render(a1,i1);
+    render(a2,i2);
+    render(a3,i3);
+
+    comprobar();
+
+}
+
+a1.onclick = ()=>{
+
+    i1++;
+
+    if(i1 >= simbolos.length)
+        i1 = 0;
+
     pintar();
+
 };
 
-a2.onclick=()=>{
-    r2+=30;
+a2.onclick = ()=>{
+
+    i2++;
+
+    if(i2 >= simbolos.length)
+        i2 = 0;
+
     pintar();
+
 };
 
-a3.onclick=()=>{
-    r3+=30;
+a3.onclick = ()=>{
+
+    i3++;
+
+    if(i3 >= simbolos.length)
+        i3 = 0;
+
     pintar();
+
 };
 
 pintar();
 
 </script>
+
+    #abierto{
+
+    position:absolute;
+
+    inset:0;
+
+    border-radius:50%;
+
+    display:none;
+
+    justify-content:center;
+    align-items:center;
+
+    background:white;
+
+    font-size:60px;
+
+    z-index:100;
+}
 
 </body>
 </html>
