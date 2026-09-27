@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="ca">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Esfera 02 - El Carnaval Olvidado</title>
+<title>Record desconegut</title>
 
 <style>
 :root{
@@ -13,7 +13,9 @@
   --soft:#fff7d6;
 }
 
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 body{
   margin:0;
@@ -21,11 +23,9 @@ body{
   padding:20px;
   font-family:Arial,sans-serif;
   color:var(--dark);
-
   display:flex;
   justify-content:center;
   align-items:center;
-
   background:
     radial-gradient(circle at 15% 15%,rgba(255,255,255,.75),transparent 25%),
     linear-gradient(135deg,var(--soft),#eee9ff);
@@ -92,23 +92,6 @@ body{
   text-align:center;
 }
 
-.mundo{
-  font-size:12px;
-  font-weight:800;
-  letter-spacing:1.2px;
-  text-transform:uppercase;
-  color:var(--color2);
-  text-align:left;
-  margin-bottom:16px;
-}
-
-.icono{
-  font-size:54px;
-  line-height:1;
-  margin:0 0 12px;
-  filter:drop-shadow(0 5px 5px rgba(0,0,0,.15));
-}
-
 h1{
   font-size:28px;
   margin:0 0 10px;
@@ -145,6 +128,7 @@ input{
 
 input:focus{
   border-color:var(--color2);
+  box-shadow:0 0 0 4px rgba(255,159,67,.16);
 }
 
 button{
@@ -161,6 +145,12 @@ button{
 
 button:hover{
   transform:translateY(-1px);
+}
+
+button:disabled{
+  cursor:default;
+  opacity:.7;
+  transform:none;
 }
 
 .resultado{
@@ -183,22 +173,50 @@ button:hover{
   color:#822;
 }
 
-.foto{
+.descifrando{
   display:none;
+  margin-top:18px;
+  padding:18px;
+  border-radius:15px;
+  background:#fff0ad;
+  color:#5c4700;
+  font-weight:800;
+  animation:pulso 1s ease-in-out infinite alternate;
+}
+
+.foto-contenedor{
+  max-height:0;
+  opacity:0;
+  overflow:hidden;
+  transform:translateY(18px) scale(.97);
+  transition:
+    max-height 1.8s ease,
+    opacity 1.8s ease,
+    transform 1.8s ease;
+}
+
+.foto-contenedor.visible{
+  max-height:1000px;
+  opacity:1;
+  transform:translateY(0) scale(1);
+}
+
+.foto{
+  display:block;
   width:100%;
+  height:auto;
   border-radius:18px;
   margin-top:18px;
   border:4px solid var(--soft);
+  box-shadow:0 12px 30px rgba(37,38,58,.17);
 }
 
-.mini{
-  font-size:13px;
-  color:#777;
-  margin-top:18px;
+@keyframes pulso{
+  from{transform:scale(1);opacity:.75}
+  to{transform:scale(1.02);opacity:1}
 }
 
 @media(max-width:420px){
-
   body{
     padding:12px;
   }
@@ -210,7 +228,6 @@ button:hover{
   .pista{
     font-size:17px;
   }
-
 }
 </style>
 </head>
@@ -225,115 +242,98 @@ button:hover{
 </div>
 
 <main class="tarjeta">
+
+  <h1>Record desconegut</h1>
+
   <p class="subtitulo">
-    Parece que este recuerdo está bloqueado...
+    Sembla que aquest record està bloquejat...
   </p>
 
-  <section class="pista">
+  <section class="pista">El Minion ha deixat una única pista per ajudar-te.
 
-El Minion ha dejado una única pista para ayudarte.
+Pensa-hi bé abans de respondre:
 
-Piensa bien antes de responder:
+🪶 Un cap indi.
 
-🪶 Un jefe indio.
+🦜 Jack.
 
-🦜 Jack
+Què tenen en comú?
 
-¿Qué tienen en común?
-
-Escribe una sola palabra para recuperar el recuerdo.
-
-  </section>
+Escriu una sola paraula per recuperar el record.</section>
 
   <input
-    id="respuesta"
+    id="resposta"
     type="text"
-    placeholder="Escribe tu respuesta"
+    placeholder="Escriu la teva resposta"
     autocomplete="off"
   >
 
-  <button onclick="comprobar()">
-    DESCIFRAR ESFERA
+  <button id="boto" type="button" onclick="comprovar()">
+    DESXIFRAR ESFERA
   </button>
 
-  <div id="resultado" class="resultado"></div>
+  <div id="resultat" class="resultado"></div>
 
- <img
-id="foto"
-src="carnaval">
+  <div id="desxifrant" class="descifrando">
+    🔮 Desxifrant el record...
+  </div>
+
+  <div id="fotoContenidor" class="foto-contenedor">
+    <img
+      id="foto"
+      class="foto"
+      src="carnaval.jpg"
+      alt="Record recuperat"
+    >
+  </div>
 
 </main>
 
 <script>
-
-function normalizar(texto){
-
-  return texto
+function normalitzar(text){
+  return text
     .toLowerCase()
     .trim()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g,"");
-
 }
 
-function comprobar(){
-
-  const valor =
-  normalizar(
-    document
-      .getElementById("respuesta")
-      .value
+function comprovar(){
+  const valor = normalitzar(
+    document.getElementById("resposta").value
   );
 
-  const resultado =
-  document.getElementById(
-    "resultado"
-  );
+  const resultat = document.getElementById("resultat");
+  const desxifrant = document.getElementById("desxifrant");
+  const fotoContenidor = document.getElementById("fotoContenidor");
+  const boto = document.getElementById("boto");
+  const resposta = document.getElementById("resposta");
 
-  const foto =
-  document.getElementById(
-    "foto"
-  );
+  if(valor === "plumes" || valor === "ploma"){
+    resultat.style.display = "none";
+    desxifrant.style.display = "block";
+    boto.disabled = true;
+    resposta.disabled = true;
 
-  if(
-      valor==="plumes"
-      ||
-      valor==="pluma"
-  ){
-
-      resultado.className =
-      "resultado correcto";
-
-      resultado.innerHTML =
-      "✨ <strong>Esfera descifrada</strong><br><br>El recuerdo ha sido recuperado.";
-
-      foto.style.display =
-      "block";
-
+    setTimeout(() => {
+      desxifrant.style.display = "none";
+      resultat.className = "resultado correcto";
+      resultat.innerHTML = "✨ <strong>Esfera desxifrada</strong><br><br>El record ha estat recuperat.";
+      fotoContenidor.classList.add("visible");
+    }, 1400);
   }else{
-
-      resultado.className =
-      "resultado incorrecto";
-
-      resultado.innerHTML =
-      "❌ Esa no es la palabra correcta.";
-
+    resultat.className = "resultado incorrecto";
+    resultat.innerHTML = "❌ Aquesta no és la paraula correcta.";
   }
-
 }
 
 document
-.getElementById("respuesta")
-.addEventListener(
-"keydown",
-e=>{
-
-  if(e.key==="Enter"){
-    comprobar();
-  }
-
-});
-
+  .getElementById("resposta")
+  .addEventListener("keydown", event => {
+    if(event.key === "Enter"){
+      comprovar();
+    }
+  });
 </script>
 
 </body>
