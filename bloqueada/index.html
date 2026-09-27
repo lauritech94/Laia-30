@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Esfera bloqueada</title>
+
+<style>
+
+body{
+    margin:0;
+    background:#0f172a;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+    font-family:Arial;
+}
+
+#esfera{
+
+    width:320px;
+    height:320px;
+
+    position:relative;
+}
+
+.anillo{
+
+    position:absolute;
+
+    border-radius:50%;
+
+    border:10px solid rgba(255,255,255,.25);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    color:white;
+
+    font-weight:bold;
+
+    user-select:none;
+
+}
+
+#a1{
+    width:300px;
+    height:300px;
+    top:10px;
+    left:10px;
+}
+
+#a2{
+    width:230px;
+    height:230px;
+    top:45px;
+    left:45px;
+}
+
+#a3{
+    width:160px;
+    height:160px;
+    top:80px;
+    left:80px;
+}
+
+.marca{
+
+    position:absolute;
+
+    top:-10px;
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:16px;
+    height:16px;
+
+    border-radius:50%;
+
+    background:#ffe66d;
+}
+
+#abierto{
+
+    position:absolute;
+
+    inset:0;
+
+    border-radius:50%;
+
+    background:white;
+
+    color:black;
+
+    display:none;
+
+    justify-content:center;
+    align-items:center;
+
+    font-size:50px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="esfera">
+
+    <div id="a1" class="anillo">
+        <div class="marca"></div>
+    </div>
+
+    <div id="a2" class="anillo">
+        <div class="marca"></div>
+    </div>
+
+    <div id="a3" class="anillo">
+        <div class="marca"></div>
+    </div>
+
+    <div id="abierto">
+        🔑
+    </div>
+
+</div>
+
+<script>
+
+let r1=35;
+let r2=120;
+let r3=250;
+
+const a1=document.getElementById("a1");
+const a2=document.getElementById("a2");
+const a3=document.getElementById("a3");
+
+function pintar(){
+
+    a1.style.transform=
+        `rotate(${r1}deg)`;
+
+    a2.style.transform=
+        `rotate(${r2}deg)`;
+
+    a3.style.transform=
+        `rotate(${r3}deg)`;
+
+    comprobar();
+
+}
+
+function comprobar(){
+
+    const ok1 =
+        Math.abs(r1 % 360) < 15;
+
+    const ok2 =
+        Math.abs(r2 % 360) < 15;
+
+    const ok3 =
+        Math.abs(r3 % 360) < 15;
+
+    if(ok1 && ok2 && ok3){
+
+        document
+        .getElementById("abierto")
+        .style.display="flex";
+
+    }
+
+}
+
+a1.onclick=()=>{
+    r1+=30;
+    pintar();
+};
+
+a2.onclick=()=>{
+    r2+=30;
+    pintar();
+};
+
+a3.onclick=()=>{
+    r3+=30;
+    pintar();
+};
+
+pintar();
+
+</script>
+
+</body>
+</html>
