@@ -8,15 +8,16 @@
 
 <style>
 
-*{
-    box-sizing:border-box;
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:black;
 }
 
-body{
-    margin:0;
-    background:black;
-    min-height:100vh;
-    overflow:hidden;
+*{
+    box-sizing:border-box;
 }
 
 .contenedor{
@@ -25,22 +26,22 @@ body{
     height:100vh;
 }
 
-img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
-}
-
-#mascara{
-
+#foto{
     position:absolute;
     inset:0;
 
-    background:black;
+    width:100%;
+    height:100%;
 
-    pointer-events:none;
+    object-fit:cover;
+}
 
+#canvas{
+    position:absolute;
+    inset:0;
+
+    width:100%;
+    height:100%;
 }
 
 </style>
@@ -50,16 +51,16 @@ img{
 
 <div class="contenedor">
 
-    foto.jpg
+foto.jpg
 
-    <canvas id="mascara"></canvas>
+<canvas id="canvas"></canvas>
 
 </div>
 
 <script>
 
 const canvas =
-document.getElementById("mascara");
+document.getElementById("canvas");
 
 const ctx =
 canvas.getContext("2d");
@@ -77,15 +78,15 @@ function resize(){
 resize();
 
 window.addEventListener(
-"resize",
-resize
+    "resize",
+    resize
 );
 
 let x =
-window.innerWidth/2;
+window.innerWidth / 2;
 
 let y =
-window.innerHeight/2;
+window.innerHeight / 2;
 
 function dibujar(){
 
@@ -97,7 +98,7 @@ function dibujar(){
     );
 
     ctx.fillStyle =
-        "rgba(0,0,0,0.96)";
+        "rgba(0,0,0,0.98)";
 
     ctx.fillRect(
         0,
@@ -111,17 +112,25 @@ function dibujar(){
 
     const grad =
     ctx.createRadialGradient(
+
         x,
         y,
-        20,
+        40,
+
         x,
         y,
-        130
+        220
+
     );
 
     grad.addColorStop(
         0,
         "rgba(255,255,255,1)"
+    );
+
+    grad.addColorStop(
+        0.5,
+        "rgba(255,255,255,0.5)"
     );
 
     grad.addColorStop(
@@ -136,9 +145,9 @@ function dibujar(){
     ctx.arc(
         x,
         y,
-        130,
+        220,
         0,
-        Math.PI*2
+        Math.PI * 2
     );
 
     ctx.fill();
@@ -151,26 +160,28 @@ function dibujar(){
 dibujar();
 
 window.addEventListener(
-"pointermove",
-e=>{
+    "pointermove",
+    e=>{
 
-    x = e.clientX;
-    y = e.clientY;
+        x = e.clientX;
+        y = e.clientY;
 
-    dibujar();
+        dibujar();
 
-});
+    }
+);
 
 window.addEventListener(
-"pointerdown",
-e=>{
+    "pointerdown",
+    e=>{
 
-    x = e.clientX;
-    y = e.clientY;
+        x = e.clientX;
+        y = e.clientY;
 
-    dibujar();
+        dibujar();
 
-});
+    }
+);
 
 </script>
 
