@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Imanes</title>
+
+<style>
+
+html,body{
+margin:0;
+width:100%;
+height:100%;
+overflow:hidden;
+background:#111827;
+font-family:Arial;
+}
+
+#juego{
+position:relative;
+width:100vw;
+height:100vh;
+}
+
+.iman{
+
+position:absolute;
+
+width:80px;
+height:80px;
+
+border-radius:20px;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+font-size:42px;
+
+background:white;
+
+box-shadow:
+0 4px 15px rgba(0,0,0,.25);
+
+cursor:grab;
+
+user-select:none;
+}
+
+.unido{
+background:#d8ffe0;
+}
+
+#victoria{
+
+position:absolute;
+
+inset:0;
+
+display:flex;
+
+justify-content:center;
+align-items:center;
+
+opacity:0;
+
+transition:.5s;
+
+pointer-events:none;
+
+}
+
+#victoria.mostrar{
+opacity:1;
+}
+
+#orb{
+
+width:150px;
+height:150px;
+
+border-radius:50%;
+
+background:
+radial-gradient(
+circle,
+white,
+#ffe66d,
+#ff9f43
+);
+
+box-shadow:
+0 0 50px #ffe66d,
+0 0 120px #ff9f43;
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="juego">
+
+<div class="iman" id="vespa" style="left:100px;top:120px;">🛵</div>
+
+<div class="iman" id="cine" style="left:300px;top:120px;">🎬</div>
+
+<div class="iman" id="amor" style="left:120px;top:320px;">❤️</div>
+
+<div class="iman" id="pingu" style="left:320px;top:320px;">🐧</div>
+
+<div class="iman" id="arte" style="left:150px;top:520px;">🎨</div>
+
+<div class="iman" id="flores" style="left:350px;top:520px;">🌸</div>
+
+<div id="victoria">
+    <div id="orb"></div>
+</div>
+
+</div>
+
+<script>
+
+const parejas = {
+
+vespa:"cine",
+cine:"vespa",
+
+amor:"pingu",
+pingu:"amor",
+
+arte:"flores",
+flores:"arte"
+
+};
+
+let uniones = 0;
+
+const piezas =
+document.querySelectorAll(
+".iman"
+);
+
+piezas.forEach(
+activarArrastre
+);
+
+function activarArrastre(el){
+
+let moviendo=false;
+
+let offsetX=0;
+let offsetY=0;
+
+el.addEventListener(
+"pointerdown",
+e=>{
+
+if(el.classList.contains(
+"unido"
+)) return;
+
+moviendo=true;
+
+offsetX=e.offsetX;
+offsetY=e.offsetY;
+
+});
+
+document.addEventListener(
+"pointermove",
+e=>{
+
+if(!moviendo) return;
+
+el.style.left=
+(e.clientX-offsetX)+"px";
+
+el.style.top=
+(e.clientY-offsetY)+"px";
+
+comprobarSnap(el);
+
+});
+
+document.addEventListener(
+"pointerup",
+()=>{
+
+moviendo=false;
+
+});
+
+}
+
+function comprobarSnap(a){
+
+const parejaId =
+parejas<a.id>;
+
+const b =
+document.getElementById(
+parejaId
+);
+
+if(
+a.classList.contains("unido")
+||
+b.classList.contains("unido")
+){
+return;
+}
+
+const ax =
+parseFloat(a.style.left);
+
+const ay =
+parseFloat(a.style.top);
+
+const bx =
+parseFloat(b.style.left);
+
+const by =
+parseFloat(b.style.top);
+
+const d =
+Math.hypot(
+ax-bx,
+ay-by
+);
+
+if(d<90){
+
+a.style.left=
+((ax+bx)/2-40)+"px";
+
+a.style.top=
+((ay+by)/2)+"px";
+
+b.style.left=
+((ax+bx)/2+40)+"px";
+
+b.style.top=
+((ay+by)/2)+"px";
+
+a.classList.add(
+"unido"
+);
+
+b.classList.add(
+"unido"
+);
+
+uniones++;
+
+if(
+navigator.vibrate
+){
+navigator.vibrate(30);
+}
+
+if(uniones===3){
+
+document
+.getElementById(
+"victoria"
+)
+.classList.add(
+"mostrar"
+);
+
+}
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
