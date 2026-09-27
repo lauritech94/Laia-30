@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espejo roto</title>
+<style>
+*{box-sizing:border-box}
+html,body{
+  margin:0;
+  width:100%;
+  min-height:100%;
+  overflow:hidden;
+  background:radial-gradient(circle at center,#2b3852 0%,#111827 65%,#080c14 100%);
+  touch-action:none;
+}
+body{min-height:100vh;display:grid;place-items:center;padding:12px}
+#juego{
+  position:relative;
+  width:min(96vw,430px);
+  height:min(94vh,760px);
+  min-height:600px;
+}
+#marco{
+  position:absolute;
+  left:50%;
+  top:42%;
+  width:min(76vw,330px);
+  aspect-ratio:1;
+  transform:translate(-50%,-50%);
+  border:5px solid rgba(230,240,255,.62);
+  border-radius:16px;
+  background:linear-gradient(145deg,#0c1423,#18243a);
+  box-shadow:inset 0 0 35px #000c,0 17px 38px #0008,0 0 0 4px #ffffff0d;
+  overflow:hidden;
+}
+#objetivo{
+  position:absolute;
+  inset:0;
+  opacity:.13;
+  background:url("foto.jpg") center/cover no-repeat;
+  filter:grayscale(1) brightness(1.4);
+}
+#grietas{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:.38;
+  background:
+    linear-gradient(32deg,transparent 49.3%,#e9f7ff 49.7% 50.3%,transparent 50.7%),
+    linear-gradient(112deg,transparent 49.4%,#e9f7ff 49.8% 50.2%,transparent 50.6%),
+    linear-gradient(158deg,transparent 49.4%,#e9f7ff 49.8% 50.2%,transparent 50.6%);
+}
+.fragmento{
+  position:absolute;
+  width:121px;
+  height:121px;
+  cursor:grab;
+  touch-action:none;
+  user-select:none;
+  -webkit-user-select:none;
+  background-image:url("foto.jpg");
+  background-size:300% 300%;
+  background-repeat:no-repeat;
+  filter:drop-shadow(0 8px 8px rgba(0,0,0,.65));
+  z-index:4;
+  transition:filter .18s,opacity .45s,transform .12s;
+  -webkit-tap-highlight-color:transparent;
+}
+.fragmento.arrastrando{cursor:grabbing;filter:drop-shadow(0 14px 15px #000a) brightness(1.12);z-index:20}
+.fragmento.encajado{filter:drop-shadow(0 0 4px rgba(210,245,255,.7));cursor:default}
+.fragmento[data-i="0"]{clip-path:polygon(0 0,100% 0,82% 76%,54% 100%,0 72%);background-position:0% 0%}
+.fragmento[data-i="1"]{clip-path:polygon(0 0,100% 0,100% 72%,58% 100%,14% 72%);background-position:50% 0%}
+.fragmento[data-i="2"]{clip-path:polygon(0 0,100% 0,100% 78%,42% 100%,12% 68%);background-position:100% 0%}
+.fragmento[data-i="3"]{clip-path:polygon(0 10%,54% 0,100% 30%,82% 100%,5% 88%);background-position:0% 50%}
+.fragmento[data-i="4"]{clip-path:polygon(14% 4%,84% 0,100% 54%,74% 100%,4% 84%,0 30%);background-position:50% 50%}
+.fragmento[data-i="5"]{clip-path:polygon(8% 0,100% 16%,100% 100%,28% 89%,0 52%);background-position:100% 50%}
+.fragmento[data-i="6"]{clip-path:polygon(0 0,78% 12%,100% 58%,82% 100%,0 100%);background-position:0% 100%}
+.fragmento[data-i="7"]{clip-path:polygon(18% 0,84% 8%,100% 100%,0 100%,0 38%);background-position:50% 100%}
+.fragmento[data-i="8"]{clip-path:polygon(18% 12%,100% 0,100% 100%,0 100%,0 46%);background-position:100% 100%}
+#revelado{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  transform:scale(.72);
+  pointer-events:none;
+  z-index:30;
+  background:url("foto.jpg") center/cover no-repeat;
+  border-radius:11px;
+  box-shadow:inset 0 0 25px #fff5,0 0 45px #d8f5ff88;
+}
+#flash{position:fixed;inset:0;background:white;opacity:0;pointer-events:none;z-index:99}
+.resuelto .fragmento{animation:fundir .55s ease forwards}
+.resuelto #revelado{animation:revelar .8s .25s cubic-bezier(.2,.9,.2,1) forwards}
+@keyframes fundir{to{opacity:0}}
+@keyframes revelar{0%{opacity:0;transform:scale(.72)}65%{opacity:1;transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+@media(max-height:670px){#juego{height:640px;transform:scale(.9)}}
+</style>
+</head>
+<body>
+<div id="juego">
+  <div id="marco">
+    <div id="objetivo"></div>
+    <div id="grietas"></div>
+    <div id="revelado"></div>
+  </div>
+</div>
+<div id="flash"></div>
+<script>
+const juego=document.getElementById('juego');
+const marco=document.getElementById('marco');
+const fragmentos=[];
+let colocados=0;
+let resuelto=false;
+
+const posicionesIniciales=[
+  [4,78],[36,82],[68,79],
+  [1,62],[68,61],[34,66],
+  [5,2],[65,3],[35,4]
+];
+
+function crearFragmentos(){
+  const rectJuego=juego.getBoundingClientRect();
+  const rectMarco=marco.getBoundingClientRect();
+  const tam=rectMarco.width/3;
+
+  for(let i=0;i<9;i++){
+    const f=document.createElement('div');
+    f.className='fragmento';
+    f.dataset.i=i;
+    f.style.width=`${tam+2}px`;
+    f.style.height=`${tam+2}px`;
+
+    const fila=Math.floor(i/3);
+    const col=i%3;
+    f.objetivoX=rectMarco.left-rectJuego.left+col*tam;
+    f.objetivoY=rectMarco.top-rectJuego.top+fila*tam;
+
+    f.x=(posicionesIniciales[i][0]/100)*rectJuego.width;
+    f.y=(posicionesIniciales[i][1]/100)*rectJuego.height;
+    f.colocado=false;
+    posicionar(f);
+    activarArrastre(f);
+    juego.appendChild(f);
+    fragmentos.push(f);
+  }
+}
+
+function posicionar(f){
+  f.style.left=`${f.x}px`;
+  f.style.top=`${f.y}px`;
+}
+
+function activarArrastre(f){
+  let dx=0,dy=0,moviendo=false;
+
+  f.addEventListener('pointerdown',e=>{
+    if(f.colocado||resuelto)return;
+    e.preventDefault();
+    moviendo=true;
+    f.classList.add('arrastrando');
+    f.setPointerCapture(e.pointerId);
+    const r=f.getBoundingClientRect();
+    dx=e.clientX-r.left;
+    dy=e.clientY-r.top;
+  });
+
+  f.addEventListener('pointermove',e=>{
+    if(!moviendo||f.colocado||resuelto)return;
+    const rj=juego.getBoundingClientRect();
+    f.x=e.clientX-rj.left-dx;
+    f.y=e.clientY-rj.top-dy;
+    posicionar(f);
+  });
+
+  function soltar(){
+    if(!moviendo)return;
+    moviendo=false;
+    f.classList.remove('arrastrando');
+    const distancia=Math.hypot(f.x-f.objetivoX,f.y-f.objetivoY);
+    if(distancia<55){
+      f.x=f.objetivoX;
+      f.y=f.objetivoY;
+      f.colocado=true;
+      f.classList.add('encajado');
+      posicionar(f);
+      colocados++;
+      if(navigator.vibrate)navigator.vibrate(25);
+      comprobar();
+    }
+  }
+
+  f.addEventListener('pointerup',soltar);
+  f.addEventListener('pointercancel',soltar);
+}
+
+function comprobar(){
+  if(colocados===9&&!resuelto){
+    resuelto=true;
+    marco.classList.add('resuelto');
+    document.getElementById('flash').animate(
+      [{opacity:0},{opacity:.85},{opacity:0}],
+      {duration:550}
+    );
+    if(navigator.vibrate)navigator.vibrate([45,30,90]);
+  }
+}
+
+window.addEventListener('load',crearFragmentos);
+</script>
+</body>
+</html>
