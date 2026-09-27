@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototipo Crecimiento</title>
+<style>
+*{box-sizing:border-box}
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:radial-gradient(circle at 50% 30%,#284a42 0%,#112a29 45%,#071515 100%);
+  touch-action:none;
+}
+body{display:grid;place-items:center;padding:12px}
+#juego{
+  position:relative;
+  width:min(94vw,430px);
+  height:min(94vh,760px);
+  min-height:600px;
+  overflow:hidden;
+  border-radius:28px;
+  background:
+    radial-gradient(circle at 18% 15%,#d9ffdd22 0 2px,transparent 3px),
+    radial-gradient(circle at 76% 24%,#d9ffdd1f 0 2px,transparent 3px),
+    linear-gradient(#173a35,#0c211f 72%,#21180e 73%,#100b06 100%);
+  background-size:61px 53px,79px 71px,auto;
+  box-shadow:0 22px 70px #000c,0 0 0 5px #ffffff0d;
+}
+#canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  touch-action:none;
+}
+#semilla{
+  position:absolute;
+  left:50%;
+  bottom:19px;
+  width:48px;
+  height:36px;
+  transform:translateX(-50%) rotate(-8deg);
+  border-radius:58% 42% 54% 46%;
+  background:radial-gradient(circle at 35% 30%,#d9a96f,#85552e 58%,#3c2414);
+  box-shadow:0 6px 12px #0008,inset 0 0 8px #ffe2aa55;
+  z-index:8;
+  pointer-events:none;
+}
+#pulso{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  pointer-events:none;
+  background:radial-gradient(circle at var(--x) var(--y),#b9ffb733 0 25px,transparent 72px);
+  transition:opacity .15s;
+}
+#juego.pulsando #pulso{opacity:1}
+#victoria{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  opacity:0;
+  pointer-events:none;
+  z-index:20;
+  background:#07151533;
+}
+#florFinal{
+  position:relative;
+  width:170px;
+  height:170px;
+  transform:scale(.2);
+}
+.petalo{
+  position:absolute;
+  left:59px;
+  top:8px;
+  width:52px;
+  height:80px;
+  border-radius:55% 55% 45% 45%;
+  transform-origin:26px 77px;
+  background:radial-gradient(circle at 45% 25%,#fffbd0,#ffe66d 36%,#ff8f3d 78%);
+  box-shadow:0 0 20px #ffe66d99;
+}
+.petalo:nth-child(1){transform:rotate(0deg)}
+.petalo:nth-child(2){transform:rotate(60deg)}
+.petalo:nth-child(3){transform:rotate(120deg)}
+.petalo:nth-child(4){transform:rotate(180deg)}
+.petalo:nth-child(5){transform:rotate(240deg)}
+.petalo:nth-child(6){transform:rotate(300deg)}
+.centro{
+  position:absolute;
+  left:55px;
+  top:55px;
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff,#ffdc42 35%,#a95d12);
+  box-shadow:0 0 28px #ffe66d;
+}
+.resuelto #canvas,.resuelto #semilla{animation:fundir .65s .2s forwards}
+.resuelto #victoria{animation:mostrar .55s .35s forwards}
+.resuelto #florFinal{animation:florecer .9s .35s cubic-bezier(.2,.9,.2,1) forwards}
+@keyframes fundir{to{opacity:0}}
+@keyframes mostrar{to{opacity:1}}
+@keyframes florecer{0%{transform:scale(.2) rotate(-30deg)}65%{transform:scale(1.15) rotate(8deg)}100%{transform:scale(1) rotate(0)}}
+</style>
+</head>
+<body>
+<div id="juego">
+  <canvas id="canvas"></canvas>
+  <div id="semilla"></div>
+  <div id="pulso"></div>
+  <div id="victoria">
+    <div id="florFinal">
+      <div class="petalo"></div><div class="petalo"></div><div class="petalo"></div>
+      <div class="petalo"></div><div class="petalo"></div><div class="petalo"></div>
+      <div class="centro"></div>
+    </div>
+  </div>
+</div>
+<script>
+const juego=document.getElementById('juego');
+const canvas=document.getElementById('canvas');
+const ctx=canvas.getContext('2d');
+const pulso=document.getElementById('pulso');
+
+let ancho=0;
+let alto=0;
+let escala=1;
+let pulsando=false;
+let resuelto=false;
+let objetivoX=0;
+let puntos=[];
+let hojas=[];
+let luces=[];
+let siguiente=0;
+let tip={x:0,y:0};
+
+function ajustar(){
+  const r=canvas.getBoundingClientRect();
+  escala=window.devicePixelRatio||1;
+  canvas.width=Math.round(r.width*escala);
+  canvas.height=Math.round(r.height*escala);
+  ctx.setTransform(escala,0,0,escala,0,0);
+  ancho=r.width;
+  alto=r.height;
+  reiniciar();
+}
+
+function reiniciar(){
+  resuelto=false;
+  juego.classList.remove('resuelto','pulsando');
+  pulsando=false;
+  tip={x:ancho/2,y:alto-42};
+  objetivoX=tip.x;
+  puntos=[{x:tip.x,y:tip.y}];
+  hojas=[];
+  siguiente=0;
+  luces=[
+    {x:ancho*.34,y:alto*.76,r:16,tomada:false},
+    {x:ancho*.62,y:alto*.61,r:16,tomada:false},
+    {x:ancho*.30,y:alto*.45,r:16,tomada:false},
+    {x:ancho*.67,y:alto*.30,r:16,tomada:false},
+    {x:ancho*.48,y:alto*.14,r:18,tomada:false}
+  ];
+  dibujar();
+}
+
+function posicionPuntero(e){
+  const r=canvas.getBoundingClientRect();
+  objetivoX=Math.max(20,Math.min(ancho-20,e.clientX-r.left));
+  const x=((e.clientX-r.left)/ancho)*100;
+  const y=((e.clientY-r.top)/alto)*100;
+  pulso.style.setProperty('--x',x+'%');
+  pulso.style.setProperty('--y',y+'%');
+}
+
+canvas.addEventListener('pointerdown',e=>{
+  if(resuelto)return;
+  e.preventDefault();
+  pulsando=true;
+  posicionPuntero(e);
+  juego.classList.add('pulsando');
+  canvas.setPointerCapture(e.pointerId);
+});
+
+canvas.addEventListener('pointermove',e=>{
+  if(!pulsando||resuelto)return;
+  e.preventDefault();
+  posicionPuntero(e);
+});
+
+function dejarDePulsar(){
+  pulsando=false;
+  juego.classList.remove('pulsando');
+}
+canvas.addEventListener('pointerup',dejarDePulsar);
+canvas.addEventListener('pointercancel',dejarDePulsar);
+
+function crecer(){
+  if(!pulsando||resuelto)return;
+
+  const luz=luces[siguiente];
+  if(!luz)return;
+
+  const atraccionLuz=(luz.x-tip.x)*.020;
+  const control=(objetivoX-tip.x)*.035;
+  tip.x+=control+atraccionLuz;
+  tip.y-=1.45;
+  tip.x=Math.max(16,Math.min(ancho-16,tip.x));
+  puntos.push({x:tip.x,y:tip.y});
+
+  if(puntos.length%34===0){
+    hojas.push({x:tip.x,y:tip.y,lado:hojas.length%2?1:-1,t:0});
+  }
+
+  const d=Math.hypot(tip.x-luz.x,tip.y-luz.y);
+  if(d<luz.r+14){
+    luz.tomada=true;
+    siguiente++;
+    if(navigator.vibrate)navigator.vibrate(20);
+    if(siguiente===luces.length){
+      resuelto=true;
+      setTimeout(()=>juego.classList.add('resuelto'),350);
+      if(navigator.vibrate)navigator.vibrate([40,25,90]);
+    }
+  }
+
+  if(tip.y<8&&!resuelto){
+    tip.y=alto-42;
+    tip.x=ancho/2;
+    puntos=[{x:tip.x,y:tip.y}];
+    hojas=[];
+    luces.forEach(l=>l.tomada=false);
+    siguiente=0;
+  }
+}
+
+function dibujarFondo(){
+  ctx.clearRect(0,0,ancho,alto);
+  for(let i=0;i<26;i++){
+    const x=(i*83)%ancho;
+    const y=(i*137)%alto;
+    ctx.fillStyle='rgba(215,255,220,.12)';
+    ctx.beginPath();
+    ctx.arc(x,y,1.4,0,Math.PI*2);
+    ctx.fill();
+  }
+}
+
+function dibujarLuces(t){
+  luces.forEach((l,i)=>{
+    if(l.tomada)return;
+    const activa=i===siguiente;
+    const pulso=1+Math.sin(t/280+i)*.13;
+    const radio=l.r*pulso;
+    const grad=ctx.createRadialGradient(l.x,l.y,2,l.x,l.y,radio*2.6);
+    grad.addColorStop(0,activa?'rgba(255,255,220,1)':'rgba(180,220,190,.55)');
+    grad.addColorStop(.34,activa?'rgba(150,255,165,.9)':'rgba(100,150,120,.23)');
+    grad.addColorStop(1,'rgba(80,255,120,0)');
+    ctx.fillStyle=grad;
+    ctx.beginPath();
+    ctx.arc(l.x,l.y,radio*2.6,0,Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle=activa?'#dbffd7':'#719879';
+    ctx.beginPath();
+    ctx.arc(l.x,l.y,radio*.55,0,Math.PI*2);
+    ctx.fill();
+  });
+}
+
+function dibujarPlanta(){
+  if(puntos.length<2)return;
+  ctx.lineCap='round';
+  ctx.lineJoin='round';
+  const grad=ctx.createLinearGradient(0,alto,0,0);
+  grad.addColorStop(0,'#52752b');
+  grad.addColorStop(.6,'#67c657');
+  grad.addColorStop(1,'#b9ff98');
+  ctx.strokeStyle=grad;
+  ctx.lineWidth=8;
+  ctx.shadowColor='#70df65';
+  ctx.shadowBlur=10;
+  ctx.beginPath();
+  ctx.moveTo(puntos[0].x,puntos[0].y);
+  for(let i=1;i<puntos.length;i++)ctx.lineTo(puntos[i].x,puntos[i].y);
+  ctx.stroke();
+  ctx.shadowBlur=0;
+
+  hojas.forEach(h=>{
+    h.t=Math.min(1,h.t+.035);
+    ctx.save();
+    ctx.translate(h.x,h.y);
+    ctx.rotate(h.lado*.72);
+    ctx.scale(h.lado*h.t,h.t);
+    ctx.fillStyle='#73d45d';
+    ctx.beginPath();
+    ctx.ellipse(18,0,20,8,0,0,Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle='#b8f6a8';
+    ctx.lineWidth=1.5;
+    ctx.beginPath();
+    ctx.moveTo(0,0);ctx.lineTo(32,0);ctx.stroke();
+    ctx.restore();
+  });
+}
+
+function bucle(t){
+  crecer();
+  dibujarFondo();
+  dibujarLuces(t);
+  dibujarPlanta();
+  requestAnimationFrame(bucle);
+}
+
+window.addEventListener('resize',ajustar);
+window.addEventListener('load',()=>{ajustar();requestAnimationFrame(bucle)});
+</script>
+</body>
+</html>
