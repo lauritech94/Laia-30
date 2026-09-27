@@ -3,75 +3,449 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prototipo de balanza</title>
+<title>Balanza corregida</title>
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:radial-gradient(circle at 50% 38%,#293a59,#0b1220 72%);font-family:Arial,sans-serif;touch-action:none}
-#juego{position:relative;width:min(96vw,470px);height:min(94vh,740px);min-height:590px;margin:auto;top:50%;transform:translateY(-50%)}
-#balanza{position:absolute;left:50%;top:36%;width:390px;height:270px;transform:translate(-50%,-50%)}
-#poste{position:absolute;left:50%;top:48px;width:18px;height:190px;transform:translateX(-50%);border-radius:10px;background:linear-gradient(90deg,#76839b,#dce7f5,#65728a);box-shadow:0 8px 20px #0007}
-#base{position:absolute;left:50%;bottom:10px;width:170px;height:28px;transform:translateX(-50%);border-radius:50%;background:linear-gradient(#aab7cb,#556278);box-shadow:0 10px 18px #0008}
-#pivote{position:absolute;left:50%;top:36px;width:48px;height:48px;transform:translateX(-50%);border-radius:50%;z-index:8;background:radial-gradient(circle at 35% 30%,#fff,#f6cc5d 35%,#a66d11);box-shadow:0 0 17px #ffd76b88}
-#brazo{position:absolute;left:50%;top:56px;width:340px;height:15px;transform:translateX(-50%) rotate(0deg);transform-origin:center;z-index:6;border-radius:10px;background:linear-gradient(#dce7f5,#65728a);box-shadow:0 5px 12px #0006;transition:transform .55s cubic-bezier(.2,.8,.2,1)}
-.cuerda{position:absolute;top:7px;width:3px;height:78px;background:#bfccdf}.c1{left:18px}.c2{right:18px}
-.plato{position:absolute;top:77px;width:132px;height:58px;border-radius:0 0 70px 70px;background:linear-gradient(#eaf2ff,#8997ad);box-shadow:inset 0 -12px 14px #526076aa,0 10px 16px #0005;display:flex;align-items:flex-end;justify-content:center;gap:3px;padding:0 7px 9px}.izq{left:-41px}.der{right:-41px}
-.objeto{position:absolute;width:66px;height:66px;border:0;border-radius:17px;background:linear-gradient(145deg,#fff,#dce5f2);box-shadow:0 9px 20px #0007;font-size:34px;display:grid;place-items:center;cursor:grab;user-select:none;touch-action:none;transform:translate(-50%,-50%);z-index:20;-webkit-tap-highlight-color:transparent}.objeto.arrastrando{cursor:grabbing;transform:translate(-50%,-50%) scale(1.1);box-shadow:0 15px 30px #0009}.objeto.colocado{position:relative;left:auto!important;top:auto!important;width:48px;height:48px;transform:none;font-size:27px;border-radius:13px;box-shadow:0 4px 9px #0006;cursor:grab;flex:0 0 auto}
-#o1{left:14%;top:78%}#o2{left:33%;top:86%}#o3{left:52%;top:78%}#o4{left:71%;top:86%}#o5{left:88%;top:76%}
-#onda{position:absolute;left:50%;top:36%;width:240px;height:240px;transform:translate(-50%,-50%) scale(.2);border-radius:50%;border:4px solid #ffe66d;opacity:0;pointer-events:none;z-index:30}
-#victoria{position:absolute;inset:0;display:grid;place-items:center;opacity:0;pointer-events:none;z-index:40}
-#orb{width:145px;height:145px;border-radius:50%;background:radial-gradient(circle at 35% 28%,#fff,#ffe66d 22%,#ff9f43 58%,#7c3aed);box-shadow:0 0 45px #ffe66d,0 0 115px #ff9f43aa;transform:scale(.25)}
-.resuelto #balanza,.resuelto .objeto{animation:desaparecer .65s .3s forwards}.resuelto #onda{animation:onda .85s ease}.resuelto #victoria{animation:mostrar .6s .45s forwards}.resuelto #orb{animation:orb .85s .45s cubic-bezier(.2,.9,.2,1) forwards}
-@keyframes desaparecer{to{opacity:0;transform:scale(1.15)}}@keyframes onda{0%{opacity:1;transform:translate(-50%,-50%) scale(.2)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.8)}}@keyframes mostrar{to{opacity:1}}@keyframes orb{0%{transform:scale(.25)}65%{transform:scale(1.14)}100%{transform:scale(1)}}
-@media(max-width:440px){#balanza{transform:translate(-50%,-50%) scale(.86)}}
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:radial-gradient(circle at 50% 38%,#293a59,#0b1220 72%);
+  font-family:Arial,sans-serif;
+  touch-action:none;
+}
+body{display:grid;place-items:center;padding:12px}
+#juego{
+  position:relative;
+  width:min(96vw,470px);
+  height:min(94vh,740px);
+  min-height:590px;
+}
+#balanza{
+  position:absolute;
+  left:50%;
+  top:35%;
+  width:390px;
+  height:275px;
+  transform:translate(-50%,-50%);
+}
+#poste{
+  position:absolute;
+  left:50%;
+  top:48px;
+  width:18px;
+  height:190px;
+  transform:translateX(-50%);
+  border-radius:10px;
+  background:linear-gradient(90deg,#76839b,#dce7f5,#65728a);
+  box-shadow:0 8px 20px #0007;
+}
+#base{
+  position:absolute;
+  left:50%;
+  bottom:10px;
+  width:170px;
+  height:28px;
+  transform:translateX(-50%);
+  border-radius:50%;
+  background:linear-gradient(#aab7cb,#556278);
+  box-shadow:0 10px 18px #0008;
+}
+#pivote{
+  position:absolute;
+  left:50%;
+  top:36px;
+  width:48px;
+  height:48px;
+  transform:translateX(-50%);
+  border-radius:50%;
+  z-index:8;
+  background:radial-gradient(circle at 35% 30%,#fff,#f6cc5d 35%,#a66d11);
+  box-shadow:0 0 17px #ffd76b88;
+}
+#brazo{
+  position:absolute;
+  left:50%;
+  top:56px;
+  width:340px;
+  height:15px;
+  transform:translateX(-50%) rotate(0deg);
+  transform-origin:center;
+  z-index:6;
+  border-radius:10px;
+  background:linear-gradient(#dce7f5,#65728a);
+  box-shadow:0 5px 12px #0006;
+  transition:transform .45s cubic-bezier(.2,.8,.2,1);
+}
+.cuerda{position:absolute;top:7px;width:3px;height:78px;background:#bfccdf}
+.c1{left:18px}.c2{right:18px}
+.plato{
+  position:absolute;
+  top:77px;
+  width:145px;
+  min-height:66px;
+  border-radius:0 0 75px 75px;
+  background:linear-gradient(#eaf2ff,#8997ad);
+  box-shadow:inset 0 -12px 14px #526076aa,0 10px 16px #0005;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:4px;
+  padding:5px 8px 10px;
+}
+.izq{left:-48px}.der{right:-48px}
+.peso-total{
+  position:absolute;
+  top:145px;
+  width:145px;
+  text-align:center;
+  color:#dfe8f7;
+  font-size:14px;
+  font-weight:bold;
+  opacity:.9;
+}
+.peso-izq{left:-48px}.peso-der{right:-48px}
+#bandeja{
+  position:absolute;
+  left:50%;
+  bottom:44px;
+  width:94%;
+  min-height:155px;
+  transform:translateX(-50%);
+  border:2px dashed #ffffff2d;
+  border-radius:22px;
+  background:#ffffff0b;
+}
+.objeto{
+  position:absolute;
+  width:66px;
+  height:66px;
+  border:0;
+  border-radius:17px;
+  background:linear-gradient(145deg,#fff,#dce5f2);
+  box-shadow:0 9px 20px #0007;
+  font-size:34px;
+  display:grid;
+  place-items:center;
+  cursor:grab;
+  user-select:none;
+  touch-action:none;
+  transform:translate(-50%,-50%);
+  z-index:20;
+  -webkit-tap-highlight-color:transparent;
+  transition:box-shadow .14s,transform .14s;
+}
+.objeto::after{
+  content:attr(data-peso);
+  position:absolute;
+  right:-5px;
+  bottom:-5px;
+  width:25px;
+  height:25px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:#28364d;
+  color:white;
+  font-size:12px;
+  font-weight:bold;
+  border:2px solid #dfe8f7;
+}
+.objeto.arrastrando{
+  cursor:grabbing;
+  transform:translate(-50%,-50%) scale(1.1);
+  box-shadow:0 15px 30px #0009;
+  z-index:50;
+}
+.objeto.colocado{
+  position:relative;
+  left:auto!important;
+  top:auto!important;
+  width:49px;
+  height:49px;
+  transform:none;
+  font-size:27px;
+  border-radius:13px;
+  box-shadow:0 4px 9px #0006;
+  cursor:grab;
+  flex:0 0 auto;
+}
+.objeto.colocado::after{width:20px;height:20px;font-size:10px}
+#o1{left:10%;top:38%}#o2{left:27%;top:70%}#o3{left:44%;top:38%}
+#o4{left:61%;top:70%}#o5{left:78%;top:38%}#o6{left:91%;top:70%}
+#estado{
+  position:absolute;
+  left:50%;
+  bottom:10px;
+  transform:translateX(-50%);
+  width:94%;
+  text-align:center;
+  color:#cbd7e9;
+  font-size:13px;
+  min-height:18px;
+}
+#reiniciar{
+  position:absolute;
+  right:3%;
+  top:3%;
+  z-index:70;
+  border:0;
+  border-radius:12px;
+  padding:9px 12px;
+  background:#ffffff18;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+#onda{
+  position:absolute;
+  left:50%;
+  top:35%;
+  width:240px;
+  height:240px;
+  transform:translate(-50%,-50%) scale(.2);
+  border-radius:50%;
+  border:4px solid #ffe66d;
+  opacity:0;
+  pointer-events:none;
+  z-index:30;
+}
+#victoria{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  opacity:0;
+  pointer-events:none;
+  z-index:60;
+  background:rgba(8,12,22,.22);
+}
+#orb{
+  width:145px;
+  height:145px;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 28%,#fff,#ffe66d 22%,#ff9f43 58%,#7c3aed);
+  box-shadow:0 0 45px #ffe66d,0 0 115px #ff9f43aa;
+  transform:scale(.25);
+}
+.resuelto #balanza,.resuelto #bandeja,.resuelto #estado,.resuelto #reiniciar{
+  animation:desaparecer .65s .3s forwards;
+}
+.resuelto #onda{animation:onda .85s ease}
+.resuelto #victoria{animation:mostrar .6s .45s forwards}
+.resuelto #orb{animation:orb .85s .45s cubic-bezier(.2,.9,.2,1) forwards}
+@keyframes desaparecer{to{opacity:0;transform:scale(1.08)}}
+@keyframes onda{0%{opacity:1;transform:translate(-50%,-50%) scale(.2)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.8)}}
+@keyframes mostrar{to{opacity:1}}
+@keyframes orb{0%{transform:scale(.25)}65%{transform:scale(1.14)}100%{transform:scale(1)}}
+@media(max-width:440px){#balanza{transform:translate(-50%,-50%) scale(.84)}#juego{min-height:620px}}
 </style>
 </head>
 <body>
 <div id="juego">
+  <button id="reiniciar" type="button">↻</button>
+
   <div id="balanza">
-    <div id="poste"></div><div id="base"></div><div id="pivote"></div>
+    <div id="poste"></div>
+    <div id="base"></div>
+    <div id="pivote"></div>
     <div id="brazo">
-      <div class="cuerda c1"></div><div id="platoIzq" class="plato izq"></div>
-      <div class="cuerda c2"></div><div id="platoDer" class="plato der"></div>
+      <div class="cuerda c1"></div>
+      <div id="platoIzq" class="plato izq"></div>
+      <div class="cuerda c2"></div>
+      <div id="platoDer" class="plato der"></div>
+      <div id="pesoIzq" class="peso-total peso-izq">0</div>
+      <div id="pesoDer" class="peso-total peso-der">0</div>
     </div>
   </div>
-  <button id="o1" class="objeto" data-peso="1">🍋</button>
-  <button id="o2" class="objeto" data-peso="2">📘</button>
-  <button id="o3" class="objeto" data-peso="3">🧸</button>
-  <button id="o4" class="objeto" data-peso="4">🎁</button>
-  <button id="o5" class="objeto" data-peso="5">🪨</button>
-  <div id="onda"></div><div id="victoria"><div id="orb"></div></div>
+
+  <div id="bandeja">
+    <button id="o1" class="objeto" data-peso="1" type="button">🍋</button>
+    <button id="o2" class="objeto" data-peso="2" type="button">📘</button>
+    <button id="o3" class="objeto" data-peso="3" type="button">🧸</button>
+    <button id="o4" class="objeto" data-peso="4" type="button">🎁</button>
+    <button id="o5" class="objeto" data-peso="6" type="button">🪨</button>
+    <button id="o6" class="objeto" data-peso="8" type="button">🧳</button>
+  </div>
+
+  <div id="estado"></div>
+  <div id="onda"></div>
+  <div id="victoria"><div id="orb"></div></div>
 </div>
+
 <script>
 const juego=document.getElementById('juego');
 const brazo=document.getElementById('brazo');
 const izq=document.getElementById('platoIzq');
 const der=document.getElementById('platoDer');
+const bandeja=document.getElementById('bandeja');
+const pesoIzqEl=document.getElementById('pesoIzq');
+const pesoDerEl=document.getElementById('pesoDer');
+const estado=document.getElementById('estado');
 const objetos=[...document.querySelectorAll('.objeto')];
-let activa=null,dx=0,dy=0,origen=null,resuelto=false;
 
-function peso(plato){return [...plato.querySelectorAll('.objeto')].reduce((s,o)=>s+Number(o.dataset.peso),0)}
+let activa=null;
+let offsetX=0;
+let offsetY=0;
+let origen=null;
+let resuelto=false;
+
+function peso(plato){
+  return [...plato.querySelectorAll('.objeto')]
+    .reduce((s,o)=>s+Number(o.dataset.peso),0);
+}
+
+function todosColocados(){
+  return objetos.every(o=>o.parentElement===izq||o.parentElement===der);
+}
+
 function actualizar(){
- const a=peso(izq),b=peso(der),dif=Math.max(-18,Math.min(18,(b-a)*4));
- brazo.style.transform=`translateX(-50%) rotate(${dif}deg)`;
- if(a>0&&b>0&&a===b&&!resuelto){resuelto=true;setTimeout(()=>juego.classList.add('resuelto'),500);if(navigator.vibrate)navigator.vibrate([40,25,90])}
+  const a=peso(izq);
+  const b=peso(der);
+  const diferencia=Math.max(-18,Math.min(18,(b-a)*3));
+
+  brazo.style.transform=`translateX(-50%) rotate(${diferencia}deg)`;
+  pesoIzqEl.textContent=a;
+  pesoDerEl.textContent=b;
+
+  if(resuelto)return;
+
+  if(!todosColocados()){
+    estado.textContent='';
+    return;
+  }
+
+  if(a===b){
+    estado.textContent='';
+    resuelto=true;
+    setTimeout(()=>juego.classList.add('resuelto'),450);
+    if(navigator.vibrate)navigator.vibrate([40,25,90]);
+  }else{
+    estado.textContent='Todos están colocados, pero la balanza aún no está equilibrada.';
+  }
 }
+
+function posicionInicial(o){
+  const mapa={
+    o1:[10,38],o2:[27,70],o3:[44,38],
+    o4:[61,70],o5:[78,38],o6:[91,70]
+  };
+  const p=mapa[o.id];
+  o.style.left=p[0]+'%';
+  o.style.top=p[1]+'%';
+}
+
+function sacarAlTablero(o){
+  const r=o.getBoundingClientRect();
+  const jr=juego.getBoundingClientRect();
+  o.classList.remove('colocado');
+  juego.appendChild(o);
+  o.style.left=(r.left-jr.left+r.width/2)+'px';
+  o.style.top=(r.top-jr.top+r.height/2)+'px';
+}
+
 function empezar(e){
- if(resuelto)return;e.preventDefault();activa=e.currentTarget;origen=activa.parentElement.classList.contains('plato')?activa.parentElement:null;
- const r=activa.getBoundingClientRect();dx=e.clientX-r.left;dy=e.clientY-r.top;
- if(origen){const jr=juego.getBoundingClientRect();activa.classList.remove('colocado');juego.appendChild(activa);activa.style.left=(r.left-jr.left+r.width/2)+'px';activa.style.top=(r.top-jr.top+r.height/2)+'px'}
- activa.classList.add('arrastrando');activa.setPointerCapture(e.pointerId);actualizar();
+  if(resuelto)return;
+  e.preventDefault();
+
+  activa=e.currentTarget;
+  origen=activa.parentElement;
+
+  if(origen===izq||origen===der){
+    sacarAlTablero(activa);
+  }
+
+  const r=activa.getBoundingClientRect();
+  offsetX=e.clientX-(r.left+r.width/2);
+  offsetY=e.clientY-(r.top+r.height/2);
+
+  activa.classList.add('arrastrando');
+  activa.setPointerCapture(e.pointerId);
+  actualizar();
 }
-function mover(e){if(!activa||resuelto)return;e.preventDefault();const jr=juego.getBoundingClientRect();activa.style.left=(e.clientX-jr.left-dx+activa.offsetWidth/2)+'px';activa.style.top=(e.clientY-jr.top-dy+activa.offsetHeight/2)+'px'}
-function dentro(e,el){const r=el.getBoundingClientRect();return e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom}
+
+function mover(e){
+  if(!activa||resuelto)return;
+  e.preventDefault();
+
+  const jr=juego.getBoundingClientRect();
+  const mitadX=activa.offsetWidth/2;
+  const mitadY=activa.offsetHeight/2;
+
+  let x=e.clientX-jr.left-offsetX;
+  let y=e.clientY-jr.top-offsetY;
+
+  x=Math.max(mitadX,Math.min(jr.width-mitadX,x));
+  y=Math.max(mitadY,Math.min(jr.height-mitadY,y));
+
+  activa.style.left=x+'px';
+  activa.style.top=y+'px';
+}
+
+function dentro(e,el){
+  const r=el.getBoundingClientRect();
+  return e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom;
+}
+
+function devolver(o){
+  if(origen===izq||origen===der){
+    o.style.left='';
+    o.style.top='';
+    o.classList.add('colocado');
+    origen.appendChild(o);
+  }else{
+    bandeja.appendChild(o);
+    posicionInicial(o);
+  }
+}
+
 function soltar(e){
- if(!activa)return;e.preventDefault();const o=activa;activa=null;o.classList.remove('arrastrando');
- let destino=null;if(dentro(e,izq))destino=izq;if(dentro(e,der))destino=der;
- if(destino){o.style.left='';o.style.top='';o.classList.add('colocado');destino.appendChild(o)}
- else if(origen){o.style.left='';o.style.top='';o.classList.add('colocado');origen.appendChild(o)}
- actualizar();
+  if(!activa)return;
+  e.preventDefault();
+
+  const o=activa;
+  activa=null;
+  o.classList.remove('arrastrando');
+
+  let destino=null;
+  if(dentro(e,izq))destino=izq;
+  else if(dentro(e,der))destino=der;
+
+  if(destino){
+    o.style.left='';
+    o.style.top='';
+    o.classList.add('colocado');
+    destino.appendChild(o);
+  }else{
+    devolver(o);
+  }
+
+  actualizar();
 }
-objetos.forEach(o=>{o.addEventListener('pointerdown',empezar);o.addEventListener('pointermove',mover);o.addEventListener('pointerup',soltar);o.addEventListener('pointercancel',soltar)});
-actualizar();
+
+function reiniciar(){
+  resuelto=false;
+  juego.classList.remove('resuelto');
+  document.getElementById('victoria').style.opacity='';
+  objetos.forEach(o=>{
+    o.classList.remove('colocado','arrastrando');
+    bandeja.appendChild(o);
+    posicionInicial(o);
+  });
+  actualizar();
+}
+
+objetos.forEach(o=>{
+  o.addEventListener('pointerdown',empezar);
+  o.addEventListener('pointermove',mover);
+  o.addEventListener('pointerup',soltar);
+  o.addEventListener('pointercancel',soltar);
+});
+
+document.getElementById('reiniciar').addEventListener('click',reiniciar);
+reiniciar();
 </script>
 </body>
 </html>
